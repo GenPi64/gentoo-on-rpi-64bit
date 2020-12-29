@@ -24,12 +24,10 @@ The image may be downloaded from the link below (or via `wget`, per the instruct
 
 <a id="downloadlinks"></a>Variant | Version | Image | Digital Signature
 :--- | ---: | ---: | ---:
-Raspberry Pi  4B, 3B/B+ 64-bit Full | v1.6.0 | [genpi64.img.xz](https://github.com/sakaki-/gentoo-on-rpi-64bit/releases/download/v1.6.0/genpi64.img.xz) | [genpi64.img.xz.asc](https://github.com/sakaki-/gentoo-on-rpi-64bit/releases/download/v1.6.0/genpi64.img.xz.asc)
-Raspberry Pi 4B, 3B/B+ 64-bit Lite | v1.6.0 | [genpi64lite.img.xz](https://github.com/sakaki-/gentoo-on-rpi-64bit/releases/download/v1.6.0/genpi64lite.img.xz) | [genpi64lite.img.xz.asc](https://github.com/sakaki-/gentoo-on-rpi-64bit/releases/download/v1.6.0/genpi64lite.img.xz.asc)
+Raspberry Pi  4B, 3B/B+ 64-bit Full | alpha4 | [genpi64-lite-alpha4.img.zst](https://packages.genpi64.com/genpi64desktop-alpha4.img.zst)
+Raspberry Pi 4B, 3B/B+ 64-bit Lite | alpha4 | [genpi64lite.img.xz](https://packages.genpi64.com/genpi64-lite-alpha4.img.zst)
 
-**NB:** most users will want the first, full image ([genpi64.img.xz](https://github.com/sakaki-/gentoo-on-rpi-64bit/releases/download/v1.6.0/genpi64.img.xz)) - the 'lite' variant ([genpi64lite.img.xz](https://github.com/sakaki-/gentoo-on-rpi-64bit/releases/download/v1.6.0/genpi64lite.img.xz)) boots to a command-line (rather than a graphical desktop), and is intended only for experienced Gentoo users (who wish to to *e.g.* set up a server).
-
-> The previous release versions are still available (together with a detailed changelog) [here](https://github.com/sakaki-/gentoo-on-rpi-64bit/releases). If you have a significant amount of work invested in an older release of this image, I have also provided manual upgrade instructions (from 1.0.0 thru 1.5.4 &rarr; 1.6.0) [here](https://github.com/sakaki-/gentoo-on-rpi-64bit/releases#upgrade_to_1_6_0).
+**NB:** most users will want the first, full image ([genpi64desktop-alpha4.img.zst](https://packages.genpi64.com/genpi64desktop-alpha4.img.zst)) - the 'lite' variant ([genpi64-lite-alpha4.img.zst](https://packages.genpi64.com/genpi64-lite-alpha4.img.zst)) boots to a command-line (rather than a graphical desktop), and is intended only for experienced Gentoo users (who wish to to *e.g.* set up a server).
 
 Please read the instructions below before proceeding. Also please note that all images (and binary packages) are provided 'as is' and without warranty. You should also be comfortable with the (at the moment, unavoidable) non-free licenses required by the firmware and boot software supplied on the image before proceeding: these may be reviewed [here](https://github.com/sakaki-/gentoo-on-rpi-64bit/tree/master/licenses).
 
@@ -83,32 +81,24 @@ Choose either the full (recommended for most users) or 'lite' (command-line only
 
 > Alternatively, for those who prefer the Raspberry Pi [NOOBS](https://www.raspberrypi.org/documentation/installation/noobs.md) installer GUI, both images are now available for installation using [PINN](https://github.com/procount/pinn) (called `gentoo64` and `gentoo64lite` there). PINN is a fork of NOOBS and includes a number of additional advanced features. Please see [this post](https://forums.gentoo.org/viewtopic-p-8122236.html#8122236) for further details. *Many thanks to [procount](https://github.com/procount) for his work on this.*
 
-### <a id="regularimage"></a>Full Image (`genpi64.img.xz`)
+### <a id="regularimage"></a>Full Image (`genpi64desktop-latest.img.zst`)
 
 On your Linux box, issue (you may need to be `root`, or use `sudo`, for the following, hence the '#' prompt):
 ```console
-# wget -c https://github.com/sakaki-/gentoo-on-rpi-64bit/releases/download/v1.6.0/genpi64.img.xz
-# wget -c https://github.com/sakaki-/gentoo-on-rpi-64bit/releases/download/v1.6.0/genpi64.img.xz.asc
+# wget -c https://packages.genpi64.com/genpi64desktop-latest.img.zst
+# zstd -d genpi64desktop-latest.img.zst -o genpi64desktop-latest.img
 ```
 
 <img src="https://github.com/sakaki-/resources/raw/master/raspberrypi/pi4/rpi4-desktop.png" alt="RPi4 Running Full Image" height="200px" align="right"/>
 
-to fetch the compressed disk image file (~1,961MiB) and its signature.
-
-Next, if you like, verify the image using gpg (this step is optional):
-```console
-# gpg --keyserver hkp://ipv4.pool.sks-keyservers.net:80 --recv-key DDE76CEA
-# gpg --verify genpi64.img.xz.asc genpi64.img.xz
-```
-
-Assuming that reports 'Good signature', you can proceed. (Warnings that the key is "not certified with a trusted signature" are normal and [may be ignored](http://security.stackexchange.com/questions/6841/ways-to-sign-gpg-public-key-so-it-is-trusted).)
+to fetch the compressed disk image file (~1,961MiB).
 
 Next, insert (into your Linux box) the microSD card on which you want to install the image, and determine its device path (this will be something like `/dev/sdb`, `/dev/sdc` etc. (if you have a [USB microSD card reader](http://linux-sunxi.org/Bootable_SD_card#Introduction)), or perhaps something like `/dev/mmcblk0` (if you have e.g. a PCI-based reader); in any case, the actual path will depend on your system - you can use the `lsblk` tool to help you). Unmount any existing partitions of the card that may have automounted (using `umount`). Then issue:
 
 > **Warning** - this will *destroy* all existing data on the target drive, so please double-check that you have the path correct! As mentioned, it is wise to use a spare microSD card as your target, keeping your existing Raspbian microSD card in a safe place; that way, you can easily reboot back into your existing Raspbian system, simply by swapping back to your old card.
 
 ```console
-# xzcat genpi64.img.xz > /dev/sdX && sync
+# dd if=genpi64desktop-latest.img of=/dev/sdX bs=1M status=progress; sync
 ```
 
 Substitute the actual microSD card device path, for example `/dev/sdc`, for `/dev/sdX` in the above command. Make sure to reference the device, **not** a partition within it (so e.g., `/dev/sdc` and not `/dev/sdc1`; `/dev/sdd` and not `/dev/sdd1` etc.)
@@ -125,28 +115,21 @@ Now continue reading at ["Booting!"](#booting) below.
 
 On your Linux box, issue (you may need to be `root`, or use `sudo`, for the following, hence the '#' prompt):
 ```console
-# wget -c https://github.com/sakaki-/gentoo-on-rpi-64bit/releases/download/v1.6.0/genpi64lite.img.xz
-# wget -c https://github.com/sakaki-/gentoo-on-rpi-64bit/releases/download/v1.6.0/genpi64lite.img.xz.asc
+# wget -c https://packages.genpi64.com/genpi64-lite-latest.img.zst
+# zstd -d genpi64-lite-latest.img.zst -o genpi64-lite-latest.img
 ```
 
 <img src="https://github.com/sakaki-/resources/raw/master/raspberrypi/pi4/rpi4-console.png" alt="[RPi4 Running Lite Image]" height="200px" align="right"/>
 
-to fetch the compressed disk image file (~755MiB) and its signature.
+to fetch the compressed disk image file (~956MiB)
 
-Next, if you like, verify the image using gpg (this step is optional):
-```console
-# gpg --keyserver hkp://ipv4.pool.sks-keyservers.net:80 --recv-key DDE76CEA
-# gpg --verify genpi64lite.img.xz.asc genpi64lite.img.xz
-```
-
-Assuming that reports 'Good signature', you can proceed. (Warnings that the key is "not certified with a trusted signature" are normal and [may be ignored](http://security.stackexchange.com/questions/6841/ways-to-sign-gpg-public-key-so-it-is-trusted).)
 
 Next, insert (into your Linux box) the microSD card on which you want to install the image, and determine its device path (this will be something like `/dev/sdb`, `/dev/sdc` etc. (if you have a [USB microSD card reader](http://linux-sunxi.org/Bootable_SD_card#Introduction)), or perhaps something like `/dev/mmcblk0` (if you have e.g. a PCI-based reader); in any case, the actual path will depend on your system - you can use the `lsblk` tool to help you). Unmount any existing partitions of the card that may have automounted (using `umount`). Then issue:
 
 > **Warning** - this will *destroy* all existing data on the target drive, so please double-check that you have the path correct! As mentioned, it is wise to use a spare microSD card as your target, keeping your existing Raspbian microSD card in a safe place; that way, you can easily reboot back into your existing Raspbian system, simply by swapping back to your old card.
 
 ```console
-# xzcat genpi64lite.img.xz > /dev/sdX && sync
+# dd if=genpi64-lite-latest.img of=/dev/sdX bs=1M status=progress; sync
 ```
 
 Substitute the actual microSD card device path, for example `/dev/sdc`, for `/dev/sdX` in the above command. Make sure to reference the device, **not** a partition within it (so e.g., `/dev/sdc` and not `/dev/sdc1`; `/dev/sdd` and not `/dev/sdd1` etc.)
@@ -887,6 +870,6 @@ I'd like to acknowledge NeddySeagoon's work getting Gentoo to run in 64-bit mode
 
 ## Feedback Welcome!
 
-If you have any problems, questions or comments regarding this project, feel free to drop me a line! (sakaki@deciban.com)
+If you have any problems, questions or comments regarding this project, please either use our Discord, or try to get in touch with us on IRC (#gentoo-arm, Freenode).
 
 
