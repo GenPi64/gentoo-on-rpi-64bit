@@ -2,6 +2,20 @@
 
 This assumes that you're using the latest available Sakaki's image.
 
+## Binhost
+
+Please make sure that your /etc/portage/make.conf does not have a binhost set at all.
+
+Create a new file /etc/portage/binrepos.conf:
+```
+[genpi64-main-binhost]
+priority = 99
+sync-uri = https://packages.genpi64.com/
+
+[genpi64-europe-binhost]
+priority = 98
+sync-uri = https://fi.packages.genpi64.com/
+```
 
 ## Overlays
 
