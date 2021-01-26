@@ -22,12 +22,12 @@ Here's a screenshot of the image running on a dual-display RPi4 B (click to show
 
 The image may be downloaded from the link below (or via `wget`, per the instructions which follow).
 
-<a id="downloadlinks"></a>Variant | Version | Image | Digital Signature
+<a id="downloadlinks"></a>Variant | Version | Image |
 :--- | ---: | ---: | ---:
-Raspberry Pi  4B, 3B/B+ 64-bit Full | alpha4 | [genpi64-lite-alpha4.img.zst](https://packages.genpi64.com/genpi64desktop-alpha4.img.zst)
-Raspberry Pi 4B, 3B/B+ 64-bit Lite | alpha4 | [genpi64lite.img.xz](https://packages.genpi64.com/genpi64-lite-alpha4.img.zst)
+Raspberry Pi  4B, 3B/B+ 64-bit Full | alpha4 | [genpi64desktop-latest.img.zst](https://packages.genpi64.com/genpi64desktop-latest.img.zst)
+Raspberry Pi 4B, 3B/B+ 64-bit Lite | alpha5 | [genpi64-lite-latest.img.xz](https://packages.genpi64.com/genpi64-lite-latest.img.zst)
 
-**NB:** most users will want the first, full image ([genpi64desktop-alpha4.img.zst](https://packages.genpi64.com/genpi64desktop-alpha4.img.zst)) - the 'lite' variant ([genpi64-lite-alpha4.img.zst](https://packages.genpi64.com/genpi64-lite-alpha4.img.zst)) boots to a command-line (rather than a graphical desktop), and is intended only for experienced Gentoo users (who wish to to *e.g.* set up a server).
+**NB:** most users will want the first, full image ([genpi64desktop-latest.img.zst](https://packages.genpi64.com/genpi64desktop-latest.img.zst)) - the 'lite' variant ([genpi64-lite-latest.img.zst](https://packages.genpi64.com/genpi64-lite-latest.img.zst)) boots to a command-line (rather than a graphical desktop), and is intended only for experienced Gentoo users (who wish to to *e.g.* set up a server).
 
 Please read the instructions below before proceeding. Also please note that all images (and binary packages) are provided 'as is' and without warranty. You should also be comfortable with the (at the moment, unavoidable) non-free licenses required by the firmware and boot software supplied on the image before proceeding: these may be reviewed [here](https://github.com/sakaki-/gentoo-on-rpi-64bit/tree/master/licenses).
 
