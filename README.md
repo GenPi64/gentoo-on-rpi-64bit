@@ -23,7 +23,7 @@ Here's a screenshot of the image running on a dual-display RPi4 B (click to show
 The image may be downloaded from the link below (or via `wget`, per the instructions which follow).
 
 <a id="downloadlinks"></a>Variant | Version | Image |
-:--- | ---: | ---: | ---:
+:--- | ---: | ---: | 
 Raspberry Pi  4B, 3B/B+ 64-bit Full | alpha4 | [genpi64desktop-latest.img.zst](https://packages.genpi64.com/genpi64desktop-latest.img.zst)
 Raspberry Pi 4B, 3B/B+ 64-bit Lite | alpha5 | [genpi64-lite-latest.img.xz](https://packages.genpi64.com/genpi64-lite-latest.img.zst)
 
