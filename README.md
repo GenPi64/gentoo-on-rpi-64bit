@@ -39,8 +39,8 @@ Please read the instructions below before proceeding. Also please note that all 
 
 - [Prerequisites](#prerequisites)
 - [Downloading and Writing the Image](#downloading-and-writing-the-image)
-  * [Full Image (genpi64.img.xz)](#regularimage)
-  * [Lite Image (genpi64lite.img.xz)](#liteimage)
+  * [Full Image (genpi64.img.zst)](#regularimage)
+  * [Lite Image (genpi64lite.img.zst)](#liteimage)
 - [Booting!](#booting)
 - [Using Gentoo](#using-gentoo)
 - [Keeping Your System Up-To-Date](#keeping-your-system-up-to-date)
