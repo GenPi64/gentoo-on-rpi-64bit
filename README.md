@@ -24,8 +24,8 @@ The image may be downloaded from the link below (or via `wget`, per the instruct
 
 <a id="downloadlinks"></a>Variant | Version | Image |
 :--- | ---: | ---: | 
-Raspberry Pi  4B, 3B/B+ 64-bit Full | alpha4 | [genpi64desktop-latest.img.zst](https://packages.genpi64.com/genpi64desktop-latest.img.zst)
-Raspberry Pi 4B, 3B/B+ 64-bit Lite | alpha5 | [genpi64-lite-latest.img.xz](https://packages.genpi64.com/genpi64-lite-latest.img.zst)
+Raspberry Pi  4B, 3B/B+ 64-bit Full | alpha7 | [genpi64desktop-latest.img.zst](https://packages.genpi64.com/genpi64desktop-latest.img.zst)
+Raspberry Pi 4B, 3B/B+ 64-bit Lite | alpha7 | [genpi64-lite-latest.img.xz](https://packages.genpi64.com/genpi64-lite-latest.img.zst)
 
 **NB:** most users will want the first, full image ([genpi64desktop-latest.img.zst](https://packages.genpi64.com/genpi64desktop-latest.img.zst)) - the 'lite' variant ([genpi64-lite-latest.img.zst](https://packages.genpi64.com/genpi64-lite-latest.img.zst)) boots to a command-line (rather than a graphical desktop), and is intended only for experienced Gentoo users (who wish to to *e.g.* set up a server).
 
@@ -102,10 +102,18 @@ Next, insert (into your Linux box) the microSD card on which you want to install
 ```
 
 Substitute the actual microSD card device path, for example `/dev/sdc`, for `/dev/sdX` in the above command. Make sure to reference the device, **not** a partition within it (so e.g., `/dev/sdc` and not `/dev/sdc1`; `/dev/sdd` and not `/dev/sdd1` etc.)
-> If, on your system, the microSD card showed up with a path of form `/dev/mmcblk0` instead, then use this as the target, in place of `/dev/sdX`. For this naming format, the trailing digit *is* part of the drive name (partitions are labelled as e.g. `/dev/mmcblk0p1`, `/dev/mmcblk0p2` etc.). So, for example, you might need to use `xzcat genpi64.img.xz > /dev/mmcblk0 && sync`.
+> If, on your system, the microSD card showed up with a path of form `/dev/mmcblk0` instead, then use this as the target, in place of `/dev/sdX`. For this naming format, the trailing digit *is* part of the drive name (partitions are labelled as e.g. `/dev/mmcblk0p1`, `/dev/mmcblk0p2` etc.). So, for example, you might need to use `zstdcat genpi64.img.zst > /dev/mmcblk0 && sync`.
 
-The above `xzcat` to the microSD card will take some time, due to the decompression (it takes between 5 and 25 minutes on my machine, depending on the microSD card used). It should exit cleanly when done - if you get a message saying 'No space left on device', then your card is too small for the image, and you should try again with a larger capacity one.
+The above `zstdcat` to the microSD card will take some time, due to the decompression (it takes between 5 and 25 minutes on my machine, depending on the microSD card used). It should exit cleanly when done - if you get a message saying 'No space left on device', then your card is too small for the image, and you should try again with a larger capacity one.
 > <a id="morespace"></a>Note that on first boot, the image will _automatically_ attempt to resize its root partition (which, in this image, includes `/home`) to fill all remaining free space on the microSD card, by running [this startup service](https://github.com/sakaki-/genpi64-overlay/blob/master/sys-apps/rpi3-init-scripts/files/init.d_autoexpand_root-4); if you _do not_ want this to happen (for example, because you wish to add extra partitions to the microSD card later yourself), then simply **rename** the (empty) sentinel file `autoexpand_root_partition` (in the top level directory of the `vfat` filesystem on the first partition of the microSD card) to `autoexpand_root_none`, before attempting to boot the image for the first time.
+
+> **BTRFS Note** - the image uses btrfs, with significant compression to reduce the disk space used and file read time.  The btrfs UUID is set at filesystem creation time, and cannot be changed on a live system.  Only one device with any given btrfs UUID can be mounted at a time.  To prevent possible problems with multiple copies of the image in use at once, after writing the image via `dd` or `zstdcat`, you should change the btrfs UUID via
+
+```console
+# btrfstune -u /dev/sdX2
+```
+
+This will generate a new, random, uuid for the second partition.  In the future we want to do this on first boot, but it must be done *before* the root filesystem is mounted.
 
 Now continue reading at ["Booting!"](#booting) below.
 
