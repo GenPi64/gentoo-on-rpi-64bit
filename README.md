@@ -22,10 +22,10 @@ Here's a screenshot of the image running on a dual-display RPi4 B (click to show
 
 The image may be downloaded from the link below (or via `wget`, per the instructions which follow).
 
-<a id="downloadlinks"></a>Variant | Version | Image |
+<a id="downloadlinks"></a>Variant | Version | Image
 :--- | ---: | ---: | 
-Raspberry Pi  4B, 3B/B+ 64-bit Full | alpha7 | [genpi64desktop-latest.img.zst](https://packages.genpi64.com/genpi-aarch64-desktop-latest.img.zst)
-Raspberry Pi 4B, 3B/B+ 64-bit Lite | alpha7 | [genpi64-lite-latest.img.zst](https://packages.genpi64.com/genpi-aarch64-lite-latest.img.zst)
+Raspberry Pi  4B, 3B/B+ 64-bit Full | alpha7 | [genpi64desktop-latest.img.zst](https://packages.genpi64.com/genpi-aarch64-desktop-latest.img.zst) ([mirror](https://fi.packages.genpi64.com/genpi-aarch64-desktop-latest.img.zst))
+Raspberry Pi 4B, 3B/B+ 64-bit Lite | alpha7 | [genpi64-lite-latest.img.zst](https://packages.genpi64.com/genpi-aarch64-lite-latest.img.zst) ([mirror](https://fi.packages.genpi64.com/genpi-aarch64-lite-latest.img.zst))
 
 **NB:** most users will want the first, full image ([genpi64desktop-latest.img.zst](https://packages.genpi64.com/genpi-aarch64-desktop-latest.img.zst)) - the 'lite' variant ([genpi64-lite-latest.img.zst](https://packages.genpi64.com/genpi-aarch64-lite-latest.img.zst)) boots to a command-line (rather than a graphical desktop), and is intended only for experienced Gentoo users (who wish to to *e.g.* set up a server).
 
