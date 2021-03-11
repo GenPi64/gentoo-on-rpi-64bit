@@ -64,22 +64,6 @@ Please run `rm -r /var/db/repos/*` and then `emerge --sync` before continuing wh
 Select the new profile: `eselect profile set genpi64:default/linux/arm64/17.0/genpi64` or `eselect profile set genpi64:default/linux/arm64/17.0/genpi64/desktop`.  
 Unmerge the obsolate meta packages: `emerge --unmerge dev-embedded/rpi-64bit-meta dev-embedded/rpi3-64bit-meta`.  
 
-Add the set files:
-```
-mkdir -p /etc/portage/sets
-cd /etc/portage/sets
-wget https://raw.githubusercontent.com/GenPi64/Build.Dist/main/config/sets/standard
-wget https://raw.githubusercontent.com/GenPi64/Build.Dist/main/config/sets/pi4
-wget https://raw.githubusercontent.com/GenPi64/Build.Dist/main/config/sets/pi4desktop
-```
-
-Add appropriate sets to your world_sets file:
-```
-echo "@standard" >> /var/lib/portage/world_sets"
-echo "@pi4" >> /var/lib/portage/world_sets"
-echo "@pi4desktop" >> /var/lib/portage/world_sets"
-```
-NB: Omit desktop one, if you're not using that profile.
 
 
 After doing all of that, update the system fully: `emerge -avg --update --newuse --deep @world`.
