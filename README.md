@@ -176,6 +176,13 @@ You should see the Pi's standard 'rainbow square' on-screen for about 2 seconds,
 
 The whole process (from first power on to graphical desktop) should take less than three minutes or so (on subsequent reboots, the resizing process will not run, so startup will be a _lot_ faster).
 
+*Note: If using the Alpha7 image, the desktop version comes up to TWM and doesn't let you run anything from this screen.  You can fix that by pressing ctrl-alt-F1, login with the provided credentials below and add an xinitrc file to start xfce4. You should be able to start a session by placing the following in your `~/.xinitrc' file and rebooting:
+
+```
+exec dbus-launch --exit-with-session xfce4-session
+```
+
+
 > The initial **root** password on the image is **raspberrypi64**. The password for **demouser** is also **raspberrypi64** (you may need this if e.g. the screen lock comes on; you can also do `sudo su --login root` to get a root prompt at the terminal, without requiring a password). These passwords are set by the [`autoexpand-root`](https://github.com/sakaki-/genpi64-overlay/blob/master/sys-apps/rpi3-init-scripts/files/init.d_autoexpand_root-4) startup service. Note that the screensaver for `demouser` has been disabled by default on the image.
 
 > NB - if your connected computer monitor or TV output appears **flickering or distorted**, you may need to change the settings in the file `config.txt`, located in the microSD card's first partition (this partition is formatted `vfat` so you should be able to edit it on any PC; alternatively, when booted into the image, it is available at `/boot/config.txt`). Any changes made take effect on the next restart. For an explanation of the various options available in `config.txt`, please see [these notes](https://www.raspberrypi.org/documentation/configuration/config-txt/README.md) (the [shipped defaults](https://github.com/sakaki-/genpi64-overlay/blob/master/sys-boot/rpi3-boot-config/files/config.txt-9) should work fine for most users, however). As of v1.3.1 of this image, you can also use the bundled GUI tool (shown in the screenshot above) to modify (some of) these settings. The program, `pyconfig_gen`, is, as noted, automatically started on first login, and is available under <kbd>Applications</kbd>&rarr;<kbd>Settings</kbd>&rarr;<kbd>RPi Config Tool</kbd>.
