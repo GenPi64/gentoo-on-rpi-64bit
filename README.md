@@ -176,7 +176,7 @@ You should see the Pi's standard 'rainbow square' on-screen for about 2 seconds,
 
 The whole process (from first power on to graphical desktop) should take less than three minutes or so (on subsequent reboots, the resizing process will not run, so startup will be a _lot_ faster).
 
-*Note: If using the Alpha7 image, the desktop version comes up to TWM and doesn't let you run anything from this screen.  You can fix that by pressing ctrl-alt-F1, login with the provided credentials below and add an xinitrc file to start xfce4. You should be able to start a session by placing the following in your `~/.xinitrc' file and rebooting:
+**Note: If using the Alpha7 image, the desktop version comes up to TWM and doesn't let you run anything from this screen.  You can fix that by pressing ctrl-alt-F1, login with the provided credentials below and add an xinitrc file to start xfce4. You should be able to start a session by placing the following in your `~/.xinitrc` file and rebooting:**
 
 ```
 exec dbus-launch --exit-with-session xfce4-session
