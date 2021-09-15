@@ -3,7 +3,7 @@ Bootable 64-bit Gentoo image for the Raspberry Pi 4 Model B, and Pi 3 B and B+, 
 
 30 Oct 2020: sadly, due legal obligations arising from a recent change in Sakaki's 'real world' job, she stepped down from all maintenence roles related to Gentoo, leaving all her projects in limbo.  
 
-This is the community maintained continuation of her work.  Want to get involved?  Open an issue here, or join the Discord server at https://discord.gg/Eu5D2e5KJQ 
+This is the community maintained continuation of her work.  Want to get involved?  Open an issue here, or join the Discord server at https://discord.gg/a9VqTGHPy6 
 
 ## Description
 
