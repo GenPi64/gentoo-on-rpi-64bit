@@ -25,9 +25,9 @@ The image may be downloaded from the link below (or via `wget`, per the instruct
 <a id="downloadlinks"></a>Variant | Version | Image
 :--- | ---: | ---: | 
 Raspberry Pi  4B, 3B/B+ 64-bit Full | alpha8 | [genpi64desktop-latest.img.zst](https://packages.genpi64.com/genpi-aarch64-desktop-latest.img.zst) ([mirror](https://fi.packages.genpi64.com/genpi-aarch64-desktop-latest.img.zst))
-Raspberry Pi 4B, 3B/B+ 64-bit Lite | alpha8 | [genpi64-lite-latest.img.zst](https://packages.genpi64.com/genpi-aarch64-lite-latest.img.zst) ([mirror](https://fi.packages.genpi64.com/genpi-aarch64-lite-latest.img.zst))
+Raspberry Pi 4B, 3B/B+ 64-bit Lite | alpha9 | [genpi64-arm64-openrc-lite-alpha9.img.zst](https://s3.genpi64.com/images/genpi64-arm64-openrc-lite-alpha9.img.zst)
 
-**NB:** most users will want the first, full image ([genpi64desktop-latest.img.zst](https://packages.genpi64.com/genpi-aarch64-desktop-latest.img.zst)) - the 'lite' variant ([genpi64-lite-latest.img.zst](https://packages.genpi64.com/genpi-aarch64-lite-latest.img.zst)) boots to a command-line (rather than a graphical desktop), and is intended only for experienced Gentoo users (who wish to to *e.g.* set up a server).
+**NB:** most users will want the first, full image ([genpi64desktop-latest.img.zst](https://packages.genpi64.com/genpi-aarch64-desktop-latest.img.zst)) - the 'lite' variant ([genpi64-arm64-openrc-lite-alpha9.img.zst](https://s3.genpi64.com/images/genpi64-arm64-openrc-lite-alpha9.img.zst)) boots to a command-line (rather than a graphical desktop), and is intended only for experienced Gentoo users (who wish to to *e.g.* set up a server).
 
 Please read the instructions below before proceeding. Also please note that all images (and binary packages) are provided 'as is' and without warranty. You should also be comfortable with the (at the moment, unavoidable) non-free licenses required by the firmware and boot software supplied on the image before proceeding: these may be reviewed [here](https://github.com/sakaki-/gentoo-on-rpi-64bit/tree/master/licenses).
 
@@ -85,7 +85,7 @@ Choose either the full (recommended for most users) or 'lite' (command-line only
 
 On your Linux box, issue (you may need to be `root`, or use `sudo`, for the following, hence the '#' prompt):
 ```console
-# wget -c https://packages.genpi64.com/genpi-aarch64-desktop-latest.img.zst
+# wget -c https://fi.packages.genpi64.com/genpi-aarch64-desktop-latest.img.zst
 # zstd -d genpi64desktop-latest.img.zst -o genpi64desktop-latest.img
 ```
 
@@ -130,8 +130,8 @@ Now continue reading at ["Booting!"](#booting) below.
 
 On your Linux box, issue (you may need to be `root`, or use `sudo`, for the following, hence the '#' prompt):
 ```console
-# wget -c https://packages.genpi64.com/genpi-aarch64-lite-latest.img.zst
-# zstd -d genpi64-lite-latest.img.zst -o genpi64-lite-latest.img
+# wget -c https://s3.genpi64.com/images/genpi-arm64-lite-latest.img.zst
+# zstd -d genpi64-arm64-lite-latest.img.zst -o genpi64-arm64-lite-latest.img
 ```
 
 <img src="https://github.com/sakaki-/resources/raw/master/raspberrypi/pi4/rpi4-console.png" alt="[RPi4 Running Lite Image]" height="200px" align="right"/>
@@ -144,22 +144,17 @@ Next, insert (into your Linux box) the microSD card on which you want to install
 > **Warning** - this will *destroy* all existing data on the target drive, so please double-check that you have the path correct! As mentioned, it is wise to use a spare microSD card as your target, keeping your existing Raspbian microSD card in a safe place; that way, you can easily reboot back into your existing Raspbian system, simply by swapping back to your old card.
 
 ```console
-# dd if=genpi64-lite-latest.img of=/dev/sdX bs=1M status=progress; sync
+# dd if=genpi64-arm64-lite-latest.img of=/dev/sdX bs=1M status=progress; sync
 ```
 
 Substitute the actual microSD card device path, for example `/dev/sdc`, for `/dev/sdX` in the above command. Make sure to reference the device, **not** a partition within it (so e.g., `/dev/sdc` and not `/dev/sdc1`; `/dev/sdd` and not `/dev/sdd1` etc.)
 > If, on your system, the microSD card showed up with a path of form `/dev/mmcblk0` instead, then use this as the target, in place of `/dev/sdX`. For this naming format, the trailing digit *is* part of the drive name (partitions are labelled as e.g. `/dev/mmcblk0p1`, `/dev/mmcblk0p2` etc.). So, for example, you might need to use `xzcat genpi64lite.img.xz -d --no-sparse -o /dev/mmcblk0 && sync`.
 
 The above `xzcat` to the microSD card will take some time, due to the decompression (it takes between 5 and 10 minutes on my machine, depending on the microSD card used). It should exit cleanly when done - if you get a message saying 'No space left on device', then your card is too small for the image, and you should try again with a larger capacity one.
-> Note that on first boot, the image will _automatically_ attempt to resize its root partition (which, in this image, includes `/home`) to fill all remaining free space on the microSD card, by running [this startup service](https://github.com/sakaki-/genpi64-overlay/blob/master/sys-apps/rpi3-init-scripts/files/init.d_autoexpand_root-4); if you _do not_ want this to happen (for example, because you wish to add extra partitions to the microSD card later yourself), then simply **rename** the (empty) sentinel file `autoexpand_root_partition` (in the top level directory of the `vfat` filesystem on the first partition of the microSD card) to `autoexpand_root_none`, before attempting to boot the image for the first time.
 
 Now continue reading at ["Booting!"](#booting), immediately below. Note, however, that in the case of this 'lite' image, after the startup / resize process has completed, you will be landed at a console login prompt (although it is simple enough to [parlay to a basic X11 desktop](https://github.com/sakaki-/gentoo-on-rpi-64bit/wiki/Setup-a-Simple-X11-Desktop-Environment-on-the-Lite-Image) if you wish). The login credentials are the same as for the full image, *viz.*:
-* default user **demouser**, password **raspberrypi64**;
-* **root** user password also **raspberrypi64**.
-
-> Hint: you can use the bundled tool `nmtui` to easily establish a WiFi network connection from the command line.
-
-> Hint: if you wish to use your RPi3/4 in a *headless* context, as of v1.5.2 of the image you can edit the file `startup.sh` on the first partition, to e.g. set up fixed network IP addresses, specify WiFi login passphrases etc. The file can be edited on any PC (since the first partition is formatted FAT) and you need to make any changes prior to first boot. The shipped `startup.sh` contains a [number of (commented) examples](https://github.com/sakaki-/genpi64-overlay/blob/master/sys-apps/rpi-onetime-startup/files/startup.sh-2) to help get you oriented. Users booting the image on a system with attached mouse, keyboard and monitor can ignore this facility of course, since networking can be configured via the GUI, once booted.
+* default user **demouser**, password **Raspberrypi64!**;
+* **root** user password also **GenPi64@**.
 
 
 ## <a id="booting"></a>Booting!
@@ -176,7 +171,7 @@ You should see the Pi's standard 'rainbow square' on-screen for about 2 seconds,
 
 The whole process (from first power on to graphical desktop) should take less than three minutes or so (on subsequent reboots, the resizing process will not run, so startup will be a _lot_ faster).
 
-> The initial **root** password on the image is **raspberrypi64**. The password for **demouser** is also **raspberrypi64** (you may need this if e.g. the screen lock comes on; you can also do `sudo su --login root` to get a root prompt at the terminal, without requiring a password). These passwords are set by the [`autoexpand-root`](https://github.com/sakaki-/genpi64-overlay/blob/master/sys-apps/rpi3-init-scripts/files/init.d_autoexpand_root-4) startup service. Note that the screensaver for `demouser` has been disabled by default on the image.
+> The initial **root** password on the image is **GenPi64@**. The password for **demouser** is also **Raspberrypi64!** (you may need this if e.g. the screen lock comes on; you can also do `sudo su --login root` to get a root prompt at the terminal, without requiring a password). These passwords are set by the [`autoexpand-root`](https://github.com/sakaki-/genpi64-overlay/blob/master/sys-apps/rpi3-init-scripts/files/init.d_autoexpand_root-4) startup service. Note that the screensaver for `demouser` has been disabled by default on the image.
 
 > NB - if your connected computer monitor or TV output appears **flickering or distorted**, you may need to change the settings in the file `config.txt`, located in the microSD card's first partition (this partition is formatted `vfat` so you should be able to edit it on any PC; alternatively, when booted into the image, it is available at `/boot/config.txt`). Any changes made take effect on the next restart. For an explanation of the various options available in `config.txt`, please see [these notes](https://www.raspberrypi.org/documentation/configuration/config-txt/README.md) (the [shipped defaults](https://github.com/sakaki-/genpi64-overlay/blob/master/sys-boot/rpi3-boot-config/files/config.txt-9) should work fine for most users, however). As of v1.3.1 of this image, you can also use the bundled GUI tool (shown in the screenshot above) to modify (some of) these settings. The program, `pyconfig_gen`, is, as noted, automatically started on first login, and is available under <kbd>Applications</kbd>&rarr;<kbd>Settings</kbd>&rarr;<kbd>RPi Config Tool</kbd>.
 
@@ -186,7 +181,7 @@ The whole process (from first power on to graphical desktop) should take less th
 
 ## <a id="using_gentoo"></a>Using Gentoo
 
-The supplied image contains a fully-configured `~arm64` Gentoo system (*not* simply a [minimal install](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Media#Minimal_installation_CD) or [stage 3](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Media#What_are_stages_then.3F)), with a complete Portage tree already downloaded, so you can immediately perform `emerge` operations etc. Be aware that, as shipped, it uses **UK locale settings, keyboard mapping, timezone and WiFi regulatory domain**; however, these are easily changed if desired. See the Gentoo Handbook ([here](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Base#Timezone) and [here](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/System#Init_and_boot_configuration)) for details on the first three; to customize the WiFi regulatory domain, start the <kbd>Applications</kbd>&rarr;<kbd>Settings</kbd>&rarr;<kbd>RPi Config Tool</kbd> app, select the <kbd>WiFi</kbd> tab, choose your location from the drop-down, click <kbd>Save and Exit</kbd>, and reboot when prompted.
+The supplied image contains a fully-configured `arm64` Gentoo system (*not* simply a [minimal install](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Media#Minimal_installation_CD) or [stage 3](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Media#What_are_stages_then.3F)), with a complete Portage tree already downloaded, so you can immediately perform `emerge` operations etc. Be aware that, as shipped, it uses **UK locale settings, keyboard mapping, timezone and WiFi regulatory domain**; however, these are easily changed if desired. See the Gentoo Handbook ([here](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Base#Timezone) and [here](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/System#Init_and_boot_configuration)) for details on the first three; to customize the WiFi regulatory domain, start the <kbd>Applications</kbd>&rarr;<kbd>Settings</kbd>&rarr;<kbd>RPi Config Tool</kbd> app, select the <kbd>WiFi</kbd> tab, choose your location from the drop-down, click <kbd>Save and Exit</kbd>, and reboot when prompted.
 
 > Please note that for non-UK keyboards, **prior** to v1.5.4 of the image, you will also need to edit the file `/etc/X11/xorg.conf.d/00-keyboard.conf` and replace  `gb` in the line `Option "XkbLayout" "gb"` with the appropriate code from [this list](https://pastebin.com/v2vCPHjs). Leave the rest of the file as-is, save, then reboot for the change to take effect. You will need to be the `root` user, or use `sudo` to edit this file (e.g., type `sudo mousepad /etc/X11/xorg.conf.d/00-keyboard.conf` in a terminal). **From** v1.5.4 however, a simpler GUI-driven method is available. Simply click <kbd>Applications</kbd>&rarr;<kbd>Settings</kbd>&rarr;<kbd>Keyboard</kbd>, select the <kbd>Layout</kbd> tab, ensure <kbd>Use system defaults</kbd> is _unchecked_, and then, in the <kbd>Keyboard layout</kbd> section, click on <kbd>Add</kbd> to insert the layouts you need to use. For example, the image has `English (UK)` and `English (US)` selected, but you should obviously choose whatever works for you. Do not add more than four layouts (or the switcher plugin will not work correctly). You can use the arrow keys to re-order the list (if you have more than one layout); the one at the _top_ will be the default activated at login time. Once done, click on <kbd>Close</kbd> to dismiss the dialog. You should now find that you can switch layouts (if you have specified more than one) either by clicking on the top panel-bar keyboard plugin (the one next to the `Demo User` text on the far right) or by pressing the hotkey (by default, this is <kbd>Windows Key</kbd><kbd>Space</kbd>).
 
@@ -252,45 +247,6 @@ One hint worth bearing in mind: desktop compositing is on for new users by defau
 
 You can update your system at any time. As there are quite a few steps involved to do this correctly on Gentoo, I have provided a convenience script, `genup` ([source](https://github.com/sakaki-/genup), [manpage](https://github.com/sakaki-/gentoo-on-rpi-64bit/blob/master/reference/genup.pdf)) to do this as part of the image.
 
-Note that **by [default](#why_weekly_update), this script will run automatically once per week, commencing the second week after first boot** (see the task installed in `/etc/cron.weekly`). Review the logfile `/var/log/latest-genup-run.log` to see changes made by the latest auto-update run.
-
-> As of version 1.3.0 of the image, a number of additional 'fixups' will also be applied weekly - these are small scripts (which may be viewed [here](https://github.com/sakaki-/genpi64-overlay/tree/master/app-portage/weekly-genup/files)) used to address emergent issues that e.g. may prevent your system updating correctly. The output may be reviewed in `/var/log/latest-fixup-run.log`. Disabling auto-updating (see text immediately below) will also disable the fixup cronjob.
-
-<a id="disable_weekly_update"></a>If you would rather _not_ use auto-updating, simply edit the file `/etc/portage/package.use/rpi-64bit-meta` so it reads (the relevant line is the last one):
-```bash
-# Enable/disable any metapackage USE flags you want here, and then
-# re-emerge dev-embedded/rpi-64bit-meta to have the effect taken up
-# e.g. you might set (uncommented):
-#
-#    dev-embedded/rpi-64bit-meta -weekly-genup
-#
-# to disable the automated weekly genup (package update)
-# run.
-#
-# Unless you override them, the default metapackage flags are used.
-# At the time of writing, those are (default flag status shown as + or -):
-#
-#  + boot-fw : pull in the /boot firmware, configs and bootloader
-#  + kernel-bin : pull in the binary kernel package
-#  - porthash : pull in repo signature checker, for isshoni.org rsync
-#  + weekly-genup: pull in cron.weekly script, to run genup automatically
-#  + innercore: pull in essential system packages for image (RPi initscripts etc.)
-#  + core: pull in main packages for image (clang etc.) (requires innercore)
-#  + xfce: pull in packages for baseline Xfce4 system (requires core)
-#  - pitop: pull in Pi-Top support packages (NB most users will NOT want this;
-#      the Pi-Top is a DIY laptop kit based around the RPi3) (requires xfce)
-#  - apps: pull in baseline desktop apps (libreoffice etc.) (requires xfce)
-#
-# NB the main point of the core, xfce, pitop and apps USE flags is just to let
-# you reduce what is in your @world set (/var/lib/portage/world).
-dev-embedded/rpi-64bit-meta -weekly-genup
-```
-
-Then re-emerge the meta package, which will remove the `cron` entry (NB: doing it this way ensures the entry *stays* removed, even if you later manually update your system):
-```console
-pi64 ~ # emerge -v rpi-64bit-meta
-```
-
 Of course, you can always use `genup` directly (as root) to update your system at any time. See the [manpage](https://github.com/sakaki-/gentoo-on-rpi-64bit/blob/master/reference/genup.pdf) for full details of the process followed, and the options available for the command.
 
 > Bear in mind that a `genup` run will take around three to six hours to complete, even if all the necessary packages are available as binaries on the [binhost](#binhost). Why? Well, since Gentoo's [Portage](https://wiki.gentoo.org/wiki/Portage) - unlike most package managers - gives you the flexibility to specify which package versions and configuration (via USE flags) you want, it has a nasty graph-theoretic problem to solve each time you ask to upgrade (and it is mostly written in Python too, which doesn't help ^-^). Also, many of the binary packages are themselves quite large (for example, the current `libreoffice` binary package is >100MiB) and so time-consuming to download (unless you have a very fast Internet connection).
@@ -302,8 +258,6 @@ pi64 ~ # dispatch-conf
 to deal with any config file clashes that may have been introduced by the upgrade process.
 
 For more information about Gentoo's package management, see [my notes here](https://wiki.gentoo.org/wiki/Sakaki's_EFI_Install_Guide/Installing_the_Gentoo_Stage_3_Files#Gentoo.2C_Portage.2C_Ebuilds_and_emerge_.28Background_Reading.29).
-
-> You may also find it useful to keep an eye on this project's (sticky) thread in the 'Gentoo on ARM' forum at [gentoo.org](https://forums.gentoo.org/viewtopic-t-1098232.html), as I occasionally post information about this project there.
 
 ### Installing New Packages Under Gentoo
 
@@ -390,13 +344,6 @@ Have fun! ^-^
 
 You don't need to read the following notes to use the image, but they may help you better understand what is going on!
 
-> NB some of the following notes need updating for the new 1.6.0 image. I plan to do this shortly.
-
-* For simplicity, the image uses a single `ext4` root partition (includes `/home`), which [by default](#morespace) will be auto-resized to fill all remaining free space on the microSD card on first boot. Also, to allow large packages (such as `gcc`) to be built from source without running out of memory on smaller systems, a 1 GiB swapfile has been set up at `/var/cache/swap/swap1`, and on boot this will be auto-resized if necessary, if space becomes tight (by [this service](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-apps/rpi3-expand-swap)). Feel free to modify this configuration as desired (for example, you can significantly improve performance under load by setting up a dedicated swap device on a separate bus from the system's rootfs; for details, please see [this short tutorial](https://github.com/sakaki-/gentoo-on-rpi-64bit/wiki/Improve-Swap-Perfomance-on-your-RPi)).
-   > Incidentally, it *is* possible to get an RPi3 Model B to boot from a USB drive (no microSD card required); see for example [these instructions](http://www.makeuseof.com/tag/make-raspberry-pi-3-boot-usb/) (try at your own risk!), and furthermore the RPi3 Model B+ can boot a USB-written image *without* modification, as it has the necessary OTP fuses factory set. Alternatively, you can retain `/boot` on the microSD card, but use a USB drive for the system root (remember to modify `/boot/cmdline.txt` and `/etc/fstab` accordingly, if you choose to go this route). At the time of writing, the RPi4 does not yet support direct USB boot (although this feature is pending, and you can always use the split sys{b,r}oot method just mentioned: NB, *if* doing so I recommend you use the a USB2 port for your rootfs on the RPi4, until the [FIQ](https://www.raspberrypi.org/forums/viewtopic.php?p=1510558#p1510558) is implemented on the aarch64 kernel).
-
-* As of version 1.3.0 of the image, the [`zswap`](https://en.wikipedia.org/wiki/Zswap) in-memory transparent compressing swap cache is in use. Under most normal workloads, this should improve responsiveness when the system starts to run out of memory, by intercepting swapped-out memory pages, compressing them, and storing them in a dynamic RAM buffer instead of hitting flash. The `rpi3-zswap` service may be viewed [here](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-apps/rpi3-zswap), and configured via `/etc/conf.d/rpi3-zswap`. 
-
 * Because the Pi has no battery-backed real time clock (RTC), I have used the `swclock` (rather than the more usual `hwclock`) OpenRC boot service on the image - this simply sets the clock on boot to the recorded last shutdown time. An NTP client, `chronyd`, is also configured, and this will set the correct time as soon as a valid network connection is established.
    > Note that this may cause a large jump in the time when it syncs, which in turn will make the screensaver lock come on. Not a major problem, but something to be aware of, as it can be quite odd to boot up, log in, and have your screen almost immediately lock! For this reason, the `demouser` account on the image has the screensaver disabled by default.
 
@@ -421,18 +368,6 @@ You don't need to read the following notes to use the image, but they may help y
 on the image to include v3d support for the new Pi4). Note however that this is still work in progress, so you may experience issues with certain applications. The image (as shipped) uses the mixed-mode [`vc4-fkms-v3d`](https://www.raspberrypi.org/forums/viewtopic.php?f=29&t=159853) overlay / driver (see `/boot/config.txt`, or <kbd>Applications</kbd>&rarr;<kbd>Settings</kbd>&rarr;<kbd>RPi Config Tool</kbd>; you can change the driver if you wish to, or are experiencing serious glitches). On my RPi4 B at least, a `glxgears` score significantly in excess 1000fps can be obtained on an unloaded system  (~400fps on a loaded desktop). Incidentally, in normal use the main load is the Xfce window manager's compositor - try turning it off to see (via <kbd>Applications</kbd>&rarr;<kbd>Settings</kbd>&rarr;<kbd>Window Manager Tweaks</kbd>, <kbd>Compositor</kbd> tab) . YMMV - if you experience problems with this setup (or find that e.g. your system is stuck on the 'rainbow square' at boot time after a kernel update), you can fall-back to the standard framebuffer mode by commenting out the `dtoverlay=vc4-fkms-v3d` line in `/boot/config.txt` (i.e., the file `config.txt` located in the microSD card's first partition).
    > Kodi, VLC and SMPlayer have been pre-installed on the image, and they will all make use of accelerated (Mesa/gl) playback. Because of incompatibilities and periodic crashes when using it, XVideo (xv) mode has been disabled in the X server (`/etc/X11/xorg.conf.d/50-disable-Xv.conf`); this doesn't really impinge on usability. NB: **if you find video playback framerates too slow**, it is always worth **disabling the window manager's compositor** (see point immediately above) as a first step. Hint: for some video types, SMPlayer and Kodi perform significantly better than VLC, so if you do experience 'glitchy' playback with one media player, try using one of the others.
 
-* As of v1.4.0 of this image, 'true' kms mode (`vc4-kms-v3d`) is usable for regular RPi users (this can be easily selected via <kbd>Applications</kbd>&rarr;<kbd>Settings</kbd>&rarr;<kbd>RPi Config Tool</kbd>). Please note that window manager compositing _should be turned off_ when using this mode, and accordingly, I have modified the existing [rpi3-safecompositor service](#safecompositor) to do this automatically.
-   > For avoidance of doubt, **f**kms, the shipped default, is unaffected by this. Also please note that Pi-Top users should **not** use the 'true' kms mode; as Pi-Top speaker audio output is not supported under it. Also, since **f**kms mode is the factory default for the Buster release of Raspbian, it is likely to receive the most support going forward, and as such, my recommendation would be to stick with that.
-
-* ALSA sound on the system is operative and routed by default through the headphone jack on the Pi. If you connect a sound-capable HDMI monitor (or television) sound should automatically also play through that device (in parallel) - at the moment there is only one 'master' volume control available.
-   > In addition to Kodi, VLC and SMPlayer (all of which can play audio) the image also includes Clementine, which has good audio library support and is well integrated with on-line music services. NB - on first launch, Clementine sometimes fails to start, if it has difficulties creating its necessary database files. If this occurs, log out, log back in, and try launching Clementine again. Once it has first started successfully (for a given user) the issue disappears.
-   
-   > Hint: if you have headphones connected to your RPi3, but can't hear anything, issue (as the regular user, in a terminal) `amixer -c 0 cset numid=3 1` to force sound to route to the onboard jack (this will cause HDMI output to be muted too). Issue `amixer -c 0 cset numid=3 2` to turn HDMI audio output on again (muting the headphones).
-
-* As of v1.5.0 of the image, full `pulseaudio` support has been built into all supplied packages (via a global USE flag).
-
-* If you are using a Pi-Top chassis, and want to get everything working, please join our discord or open an issue here.  We don't have one to test on, and various packages are bitrotting.  We're happy to bring things back, but most packages have been mothballed.
-
 * The frequency governor is switched to `ondemand` (from the default, `powersave`), for better performance, as of version 1.0.1. This is managed by the `sys-apps/rpi3-ondemand-cpufreq` package (see [below](#ondemand)).
   * If you are using an RPi3 Model B board, the frequency will switch dynamically between 600MHz and 1.2GHz, depending on load. On a Model B+, it will switch between 600MHz and 1.4GHz. On an RPi4, it will switch between 600MHz and 1.5GHz.
 
@@ -446,12 +381,6 @@ on the image to include v3d support for the new Pi4). Note however that this is 
 
 * As of version 1.0.1, all users in the `wheel` group (which includes `demouser`) have a passwordless sudo ability for all commands. Modify `/etc/sudoers` via `visudo` to change this, if desired (the relevant line is `%wheel ALL=(ALL) NOPASSWD: ALL`).
 
-* As mentioned [above](#morespace), by default on first boot the image will attempt to automatically expand the root (second) partition to fill all remaining free space on the microSD card. If, for some reason, you elected _not_ to do this (and so renamed the sentinel file `autoexpand_root_partition` to `autoexpand_root_none` prior to first boot), you can easily expand the size of the second (root) partition manually, so that you have more free space to work in, using the tools (`fdisk` and `resize2fs`). See [these instructions](http://geekpeek.net/resize-filesystem-fdisk-resize2fs/), for example. I **strongly** recommend you do expand the root partition (whether using the default, first-boot mechanism or manually) if you are intending to perform large package (or kernel) builds on your Pi (it isn't necessary just to play around with the image of course).
-
-* <a id="touchscreen"></a>If you are using the [official 7" touchscreen](https://www.element14.com/community/docs/DOC-78156/l/raspberry-pi-7-touchscreen-display) with your RPi3 (I have not tried it with an RPi4), you can rotate the display (and touch input) 180&deg; (to make it the right way up for the default case orientation) by appending `lcd_rotate=2` to `/boot/config.txt`, and restarting. Also, as of v1.1.3 of the image, the [`twofing`](http://plippo.de/p/twofing) daemon is included and will run automatically on startup; this lets you two-finger press to simulate right click, and also enables a limited repertoire of two-finger gestures (zoom/pinch, rotate, scroll etc.) within some apps. The daemon has no effect when the touchscreen is not connected. The `onboard` on-screen keyboard is also available (again, as of v1.1.3); activate it via <kbd>Applications</kbd>&rarr;<kbd>Accessories</kbd>&rarr;<kbd>Onboard</kbd>.
-* As of version 1.2.0 of the image, the SPI interface has been activated (via `/boot/config.txt`); feel free to comment this out again if you need the GPIO lines it uses.
-  * Additionally, as of 1.2.0, the necessary binaries for using your RPi3/4 to [disable the Intel Management Engine](https://wiki.gentoo.org/wiki/Sakaki's_EFI_Install_Guide/Disabling_the_Intel_Management_Engine) are now bundled with the image. Together with the above change, this allows your system to be used to run [`me_cleaner`](https://github.com/corna/me_cleaner) 'out of the box' (provided you have the correct [hardware connector and wires](https://wiki.gentoo.org/wiki/Sakaki's_EFI_Install_Guide/Disabling_the_Intel_Management_Engine#Prerequisites), of course). Users uninterested in this particular application are unaffected, and need take no action.
-
 * The image uses the RPi3/4's hardware random number generator to feed `/dev/random` (via `sys-apps/rng-tools`); see [these notes](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-boot/rpi3-64bit-firmware) for further details.
 
 * As a (limited, 64-bit) build of `media-libs/raspberrypi-userland` is included, you can use `vcgencmd` etc. As of version 1.5.2 of the image, this includes support for MMAL (including bundled tools such as `raspivid` and `raspicam`), although OpenMAX-IL is not yet supported from a 64-bit userland.
@@ -459,10 +388,6 @@ on the image to include v3d support for the new Pi4). Note however that this is 
 * If you wish to share files on a network with Windows boxes, please note that `net-fs/samba` is bundled as of version 1.2.2 of the image. To configure and activate it, please see e.g. [these notes](https://forums.gentoo.org/viewtopic-p-8215174.html#8215174).
 
 * An `sysctl.d` rule (`35-low-memory-cache-settings.conf`) is used to modify the kernel cache settings slightly, for better performance in a memory constrained environment, per [these notes](https://www.codero.com/knowledge-base/pdf.php?cat=3&id=388&artlang=en).
-
-* <a id="safecompositor"></a>As of version 1.2.2 of the image, a startup service (`rpi3-safecompositor`) is used to turn off display compositing if a high pixel clock is detected (> 1.2175MHz, currently), and an RPi3 is in use. This is because certain applications, for example LibreOffice v6 Draw and Impress, can cause the whole system to lock-up when used with compositing on under such conditions. The restriction does not apply to the RPi4.
-
-* Also as of version 1.2.2, a startup service (`rpi3-ethfix`) is used to workaround certain RPi3B+ Ethernet issues via `ethtool`. It has no effect on RPi3B or RPi4 models.
 
 * You can easily install (and run) 32-bit Raspbian apps on your 64-bit Gentoo system if you like (using `apt-get` from a `chroot`), since [ARMv8 supports mixed-mode userland](https://community.arm.com/processors/f/discussions/3330/how-aarch32-bit-applications-will-be-supported-on-aarch64?ReplyFilter=Answers&ReplySortBy=Answers&ReplySortOrder=Descending). If this interests you, please see my wiki entry on this subject, [here](https://github.com/sakaki-/gentoo-on-rpi-64bit/wiki/Running-32-bit-Raspbian-Packages-on-your-64-bit-Gentoo-System).
 
@@ -472,235 +397,11 @@ on the image to include v3d support for the new Pi4). Note however that this is 
 
 * You can easily remove unwanted applications, and even the Xfce4 graphical desktop itself, from your 64-bit Gentoo system if desired. To do so, please refer to my notes [here](https://github.com/sakaki-/gentoo-on-rpi-64bit/wiki/Create-a-Slimmed-Down-Version-of-the-Image).
 
-* If you are interested in a Docker variant of the image, please see necrose99's notes [here](https://github.com/necrose99/gentoo-on-rpi-64bit/tree/master/Dockerstuff).
-
-* As of version 1.3.0 of the image, the weekly-gated rsync mirror URI has changed, to `rsync://isshoni.org/gentoo-portage-pi64-gem`. This mirror has no `porthash`  `repo.hash{,.asc}` files present in it, so may be checked by Portage's official `gemato` verification tool (and this will be done automatically for you during `genup` runs). The `porthash` tool itself (which previous versions of the image used for tree verification) has now been retired.
-   > The old `rsync://isshoni.org/gentoo-portage-pi64` (non `-gem`) mirror will continue to be updated also for now, but will likely be withdrawn at some point in the future.
-
-* As of version 1.2.2 of the image, you can efficiently run additional guest operating systems on your 64-bit Gentoo RPi3/4, using QEMU virtualization with KVM acceleration (much as you might use, say, VirtualBox on a PC). For further details, please see my wiki tutorial [here](https://github.com/sakaki-/gentoo-on-rpi-64bit/wiki/Run-Another-OS-on-your-RPi-as-a-Virtualized-QEMU-Guest-under-KVM). If you like, you can run a GUI, even a full desktop, on your guest OS, as further detailed [here](https://github.com/sakaki-/gentoo-on-rpi-64bit/wiki/Adding-a-GUI-to-your-QEMU-KVM-Guest-OS). Sample screenshot (with an Ubuntu 18.04 LTS guest):
-  <img src="https://raw.githubusercontent.com/sakaki-/resources/master/raspberrypi/pi3/kvm-bionic-vnc.png" alt="[QEMU Guest Desktop with KVM Virtualization]" width="800px"/>
-  <br>Notice how the guest and host OSes in the above are running different *kernels* - it's not just a `chroot`. On the higher-memory (2, 4 and 8GiB) RPi4 models, running a guest OS using KVM becomes quite a realistic proposition.
-
-* If you'd like to remotely access your RPi3/4's desktop from another machine (whether a Linux PC, Windows PC, Mac or even another RPi!), you can do so easily, by using [VNC](https://en.wikipedia.org/wiki/Virtual_Network_Computing). Please see [these notes](https://github.com/sakaki-/gentoo-on-rpi-64bit/wiki/Run-a-Remote-VNC-Desktop-on-your-RPi) for further details.
-  * For Windows users, [RDP](https://en.wikipedia.org/wiki/Remote_Desktop_Protocol) access is also supported (please see [these notes](https://github.com/sakaki-/gentoo-on-rpi-64bit/wiki/Access-your-RPi3%27s-Desktop-Remotely-from-a-Windows-Box-via-RDP) for further details).
-
-* As of version 1.3.1 of the image, an Xfce4 startup service `rpi3-noblank` is active; this prevents the X11 screensaver from blanking the screen when it (i.e., the screensaver) is supposed to be turned off, as this can cause a mysterious 'black screen' (with no obvious way to recover, moving the mouse and keyboard don't work) under the `vc4-{f,}kms-v3d` graphics drivers.
-
-* As of version 1.3.1 of the image, and as noted earlier, a simple tool, [`pyconfig_gen`](url=https://github.com/sakaki-/pyconfig_gen) has been provided, for easy (GUI-based) update of (a subset of the features contained in) the `/boot/config.txt` file on the RPi3. This utility is autostarted on first boot for each user. Changes made to the `/boot/config`.txt file using this application are subject to ratification on reboot; if you do not explicitly accept them before a short time limit expires, an automatic reboot under the prior, 'last known good' config is performed. This prevents you from locking yourself out by specifying (e.g.) an HDMI mode that is unsupported by your display (as an additional precaution against this particular case, only modes reported as being supported by the currently connected display are presented for selection in the GUI). Currently, only a small (but hopefully, useful) subset of the options available may be edited via this application, but this will be increased in future. It is still possible to directly edit `/boot/config.txt` via `nano` etc. - the app ignores keys it does not manage.
-  * As of v1.5.0 of the image, you can use the `pyconfig_gen` tool to specify settings for a second screen, connected to the HDMI1 port on your Pi4 (these additional settings are ignored on the Pi3, which only has a single HDMI connector). To do so, open <kbd>Applications</kbd>&rarr;<kbd>Settings</kbd>&rarr;<kbd>RPi Config Tool</kbd>, select the <kbd>Second Display</kbd> tab, choose the appropriate settings just as you did for your main (HDMI0) display, then click <kbd>Save and Exit</kbd>, electing to reboot when prompted. Once your system comes back up, you can then confirm the settings (if OK),then click the <kbd>Launch Screen Layout Editor</kbd> to start the `arandr` program. This tool lets you set the relative rotation and layout of your two screens (side by side, stacked etc.), and you can apply these settings 'live' by clicking on the "green tickmark" toolbar button. Once you have a layout you like, you can persist it across reboots, by clicking the "save" toolbar icon (the rightmost one). If you save the settings to the location `~/.screenlayout/default.sh`, they will automatically be applied for you at each (graphical) login, for convenience. As of version 1.5.2 of the image, you can suppress this automatic application by holding down <kbd>Ctrl</kbd> during graphical startup.
-
-* <a id="v4l2"></a>As of version 1.4.0 of the image, use of the Pi's hardware video codecs, and (optional) camera module, are both supported, via the [V4L2 framework](https://events.static.linuxfound.org/images/stories/pdf/lceu2012_debski.pdf). Two trivial applications (<kbd>Applications</kbd>&rarr;<kbd>Multimedia</kbd>&rarr;<kbd>RPi Camera Live View</kbd>, and <kbd>Applications</kbd>&rarr;<kbd>Multimedia</kbd>&rarr;<kbd>RPi Video Player (HW Codecs)</kbd>) are bundled to help demonstrate these features; a screenshot of these in use (running on an RPi3B+, with an attached Pi camera module v2, in a Pi-Top v1 chassis) is shown below:
-  <img src="https://raw.githubusercontent.com/sakaki-/resources/master/raspberrypi/pi3/live-view-v4l2-codecs.jpg" alt="[Demonstrating Camera and Hardware Video Codec Access]" width="800px"/>
-  <br>As of v1.5.0 of the image, these tools also work on an RPi4.<br>Given an appropriately patched `ffmpeg` (which is present in >=v1.4.0 of the image), exploiting these features from the command line is very simple - see the [example 'recipes'](https://github.com/sakaki-/gentoo-on-rpi-64bit/wiki/Using-the-RPi%27s-Video-Codecs-and-Camera-Module) (which work for both the RPi3 and RPi4) in this project's open [wiki](https://github.com/sakaki-/gentoo-on-rpi-64bit/wiki).
-
-* <a id="mmal"></a>As of version 1.5.2 of the image, MMAL 64-bit userland support has been added, via the inclusion of 6by9's pointer-wrangling [PR#586](https://github.com/raspberrypi/userland/pull/586) into [`media-libs/raspberrypi-userland`](https://github.com/sakaki-/genpi64-overlay/blob/master/media-libs/raspberrypi-userland/files/raspberrypi-userland-1.20191121-64-bit-mmal.patch). As a result, tools such as `raspivid` and `raspistill` are bundled with the image (So now if, for example, you have the optional camera module attached, you should be able to issue e.g. `raspivid -v -o test.h264 -t 10000 -g 1`). (For those interested, OpenMAX-IL is not yet supported in 64-bit.)
-  * Also from v1.5.2, the `mmal` USE flag for `media-video/ffmpeg` has been turned on, as the necessary support libraries and headers are now present (thanks to the above PR). So, for example, you could play back the above `test.h264` file using `ffplay -vcodec h264_mmal -i test.h264` (as well as via e.g. `ffplay -vcodec h264_v4l2m2m -i test.h264` of course, since the V4L2-M2M h/w codec endpoints remain supported too).
-
-* If you'd like to install [Flatpak](https://en.wikipedia.org/wiki/Flatpak) apps on your RPi, please see [these notes](https://github.com/sakaki-/gentoo-on-rpi-64bit/wiki/Install-Flatpak-Applications-on-your-RPi) for further details.
-
-* As of version 1.5.2 of the image, the [`rpi4-eeprom-updater`](https://github.com/sakaki-/genpi64-overlay/tree/master/dev-embedded/rpi4-eeprom-updater) service has been added, to automate the upgrading of the RPi4's bootloader and VL805 (USB) EEPROM firmware, patterned on the official [rpi-eeprom](http://archive.raspberrypi.org/debian/pool/main/r/rpi-eeprom/) deb. This service has no effect on the RPi3. For further details, please see [this post](https://www.raspberrypi.org/forums/viewtopic.php?p=1557653#p1557653).
-
-* Also as of version 1.5.2, the `rpi-onetime-startup` service has been added. This runs the script `startup.sh` from the top-level directory of the FAT filesystem in partition 1, if present, on the first boot (after partition resizing), having first disabled itself from future invocation. It is particularly intended to allow e.g. initial networking to be configured for users of headless systems, and to that end the bundled `(/boot/)startup.sh` script contains a [number of (commented) examples](https://github.com/sakaki-/genpi64-overlay/blob/master/sys-apps/rpi-onetime-startup/files/startup.sh-2) of configuring the wired and wireless interfaces (using `nmcli`). To use, edit the `startup.sh` script (on e.g. a Windows or Linux desktop box) on the microSD card to which you have just written the image, prior to first using the card to boot your headless RPi3/4 (users booting the image on a system with attached mouse, keyboard and monitor do not need to do use this facility of course, since networking can be configured via the GUI, once booted).
-
-* And also as of version 1.5.2, some of the core Gentoo system paths have changed, in line with [upstream](https://bugs.gentoo.org/378603), as follows (for more details, please see [this post](https://www.raspberrypi.org/forums/viewtopic.php?p=1569964#p1569964)):
-  * `/usr/portage` -> `/var/db/repos/gentoo` (`$PORTDIR`)
-  * `/usr/portage/distfiles` -> `/var/cache/distfiles` (`$DISTDIR`)
-  * `/usr/portage/packages` -> `/var/cache/binpkgs` (`$PKGDIR`)
-  * `/usr/local/portage/<overlay>` -> `/var/db/repos/<overlay>`
-
 * If you'd like to set up a persistent dual-monitor setup on an RPi4, please see my short tutorial on this project's open wiki [here](https://github.com/sakaki-/gentoo-on-rpi-64bit/wiki/Set-Up-Dual-Displays-on-your-RPi4) (also contains some notes useful for single-display systems too).
-
-* As of version 1.6.0, you can easily check and capture detailed network activity on your system, via <kbd>Applications</kbd>&rarr;<kbd>Internet</kbd>&rarr;<kbd>EtherApe</kbd> and <kbd>Applications</kbd>&rarr;<kbd>Internet</kbd>&rarr;<kbd>Wireshark</kbd>.
-
-* Also as of version 1.6.0, a baseline set of packages for the FOSS videoconferencing server, **Jitsi**, is bundled. Please see [this post](https://forums.gentoo.org/viewtopic-p-8467370.html#8467370) for further instructions on setup and use (although you can of course skip the "RPi4 64-bit Gentoo Install" section there, as the necessary packages are already present on the image). You'll realistically require a 2GiB RPi4B (or better) to run this application successfully. Note, though, that since Jitsi does not process the video streams, but acts simply as a meeting coordination point, [selective forwarding unit](https://www.callstats.io/blog/webrtc-architectures-explained-in-5-minutes-or-less) and TURN server, the [CPU requirements are not onerous](https://jitsi.org/jitsi-videobridge-performance-evaluation/) - an RPi4 should be able to handle a reasonable number of simultaneous participants.
-
-* And also as of version 1.6.0, you can dynamically switch the output route for audio (HDMI or headphones) by right-clicking the volume icon in the top panel bar (beside the clock) and selecting <kbd>Open Mixer</kbd> from the drop-down menu; you can then choose the route in the <kbd>Playback</kbd> tab's dropdown. 
 
 ## <a id="maintnotes"></a>Maintenance Notes (Advanced Users Only) (&darr;[skip](#miscpoints))
 
 The following are some notes regarding optional maintenance tasks. The topics here may be of interest to advanced users, but it is not necessary to read these to use the image day-to-day.
-
-> NB some of the following notes need updating for the new 1.6.0 image. I plan to do this shortly.
-
-### <a id="revertkernelbin"></a>Optional: Switch Back to a 'Pure' `bcmrpi3_defconfig` / `bcm2711_defconfig` Kernel
-
-As of version 1.2.2 of the image, the default binary kernel package has changed, to `sys-kernel/bcmrpi3-kernel-bis-bin`, the underlying kernel for which uses a slightly augmented version of the upstream `bcmrpi3_defconfig`, thereby enabling a number of useful additional facilities (such as KVM, ZSWAP etc). And, as of version 1.5.0 of the image, a *second* default kernel package is used, `sys-kernel/bcm2711-kernel-bis-bin`, the underlying kernel for which uses an augmented version of the upstream `bcm2711_defconfig` for the RPi4.
-
-However, if you'd rather use the 'vanilla' `sys-kernel/bcm{rpi3,2711}-kernel-bin` (i.e., "pure" `bcm{rpi3,2711}_defconfig`) kernel packages, as was the case for <= v1.2.1 of the image, you can do so easily; simply become root, and issue:
-```console
-pi64 ~ # emerge --ask --verbose --oneshot sys-kernel/bcm{rpi3,2711}-kernel-bin
-```
-
-Once this completes, reboot immediately, and you'll be using the "old default" binary kernel packages again (and this choice will be respected during e.g. `genup` system update runs, going forward).
-
-Switching back to the "-bis" binary kernel package pair, should you subsequently wish to do so, is just as straightforward; simply become root again and issue:
-```console
-pi64 ~ # emerge --ask --verbose --oneshot sys-kernel/bcm{rpi3,2711}-kernel-bis-bin
-```
-
-Reboot immediately the above command completes.
-
-### <a id="kernelbuild"></a>Optional: Compiling a Kernel from Source
-
-If you'd like to compile a kernel from source on your new system, rather than using the provided binary package, you can do so easily.
-
-Because (at the time of writing) 64-bit support for the RPi3/4 is fairly 'cutting edge', you'll need to download the source tree directly, rather than using `sys-kernel/raspberrypi-sources`. You'll need to use at least version rpi-4.19.y (to get camera and [V4L2 M2M](https://events.static.linuxfound.org/images/stories/pdf/lceu2012_debski.pdf) access to the RPi3/4's hardware video codecs), with rpi-5.4.y preferred (and bundled as of version 1.6.0 of the image).
-
-> Actually, you _can_ also use `sys-kernel/raspberrypi-sources` if you like, as that has a 4.19.9999 ebuild. However, to keep things straightforward, I have retained the 'direct clone' instructions in what follows.
-
-The tree you need is maintained [here](https://github.com/raspberrypi/linux).
-
-However first, since it generally makes sense to use a 'stable' branch compiler and `binutils` for kernel builds, but the RPi3/4 image uses the 'testing' (aka `~arm64`) branch for all packages by default, begin by downgrading your `gcc` compiler and `binutils` on the RPi3 to the 'stable' variants (these versions are also available on the binhost, so the following process shouldn't take long). Become root, and issue:
-```console
-pi64 ~ # echo "sys-devel/gcc -~arm64" >> /etc/portage/package.accept_keywords/gcc
-pi64 ~ # echo "sys-devel/binutils -~arm64" >> /etc/portage/package.accept_keywords/binutils
-pi64 ~ # emerge --update --oneshot sys-devel/gcc sys-devel/binutils
-pi64 ~ # gcc-config --list-profiles
-```
-
-Take a note of the index number of the 'stable branch' version of the compiler returned by the last command above (this will probably be `1`), and then ensure the profile is set (substitute it for `1` in the below, if different):
-```console
-pi64 ~ # gcc-config 1
-pi64 ~ # env-update && source /etc/profile
-pi64 ~ # FEATURES="-getbinpkg" emerge --oneshot sys-devel/libtool
-```
-
-This process only needs to be done once. It won't affect your ability to build other packages on your RPi3/4.
-
-> **NB:** if you are running Gentoo on a microSD card, please be sure that you have an expanded root partition (as described [above](#morespace)) on a >=16GB card, before attempting to build a kernel.
-
-Now, suppose you wish to build the most modern version of the rpi-5.4.y kernel (same major/minor version as on the image). Then, begin by pulling down a [shallow clone](http://stackoverflow.com/q/21833870) of the desired version's branch from [GitHub](https://github.com/raspberrypi/linux) (users with sufficient bandwidth and disk space may of course clone the entire tree, and then checkout the desired branch locally, but the following approach is much faster).
-
-Working logged in as your regular user, _not_ root (for security), issue:
-```console
-user@pi64 ~ $ mkdir -pv kbuild && cd kbuild
-user@pi64 kbuild $ rm -rf linux
-user@pi64 kbuild $ git clone --depth 1 https://github.com/raspberrypi/linux.git -b rpi-5.4.y
-```
-
-This may take some time to complete, depending on the speed of your network connection.
-
-When it has completed, go into the newly created `linux` directory, and set up the baseline configuration. You'll actually need to build *two* kernels, one for the RPi3, another for the RPi4. So let's begin by building an RPi3 kernel, which uses `bcmrpi3_defconfig`. Issue:
-```console
-user@pi64 kbuild $ cd linux
-user@pi64 linux $ make distclean
-user@pi64 linux $ make bcmrpi3_defconfig
-```
-
-Next, modify the configuration if you like to suit your needs (this step is optional, as a kernel built with the stock `bcm{rpi3,2711}_defconfig` will work perfectly well for most users):
-```console
-user@pi64 linux $ make menuconfig
-```
-When ready, go ahead and build the kernel, modules, and dtbs. Issue:
-```console
-user@pi64 linux $ nice -n 19 make -j4 Image modules dtbs
-```
-This will a reasonable time to complete. (Incidentally, the build is forced to run at the lowest system priority, to prevent your machine becoming too unresponsive during this process.)
-
-With the kernel built, we need to install it. Assuming your first microSD card partition is mounted as `/boot` (which, given the `/etc/fstab` on the image (visible [here](https://github.com/sakaki-/gentoo-on-rpi-64bit/blob/master/reference/fstab)), it should be), become root.
-
-Next, remove the provided binary kernel. Edit the file `/etc/portage/package.use/rpi-64bit-meta` so it reads (the relevant line is the last one):
-```bash
-# Enable/disable any metapackage USE flags you want here, and then
-# re-emerge dev-embedded/rpi-64bit-meta to have the effect taken up
-# e.g. you might set (uncommented):
-#
-#    dev-embedded/rpi-64bit-meta -weekly-genup
-#
-# to disable the automated weekly genup (package update)
-# run.
-#
-# Unless you override them, the default metapackage flags are used.
-# At the time of writing, those are (default flag status shown as + or -):
-#
-#  + boot-fw : pull in the /boot firmware, configs and bootloader
-#  + kernel-bin : pull in the binary kernel package
-#  - porthash : pull in repo signature checker, for isshoni.org rsync
-#  + weekly-genup: pull in cron.weekly script, to run genup automatically
-#  + innercore: pull in essential system packages for image (RPi initscripts etc.)
-#  + core: pull in main packages for image (clang etc.) (requires innercore)
-#  + xfce: pull in packages for baseline Xfce4 system (requires core)
-#  - pitop: pull in Pi-Top support packages (NB most users will NOT want this;
-#      the Pi-Top is a DIY laptop kit based around the RPi3) (requires xfce)
-#  - apps: pull in baseline desktop apps (libreoffice etc.) (requires xfce)
-#
-# NB the main point of the core, xfce, pitop and apps USE flags is just to let
-# you reduce what is in your @world set (/var/lib/portage/world).
-dev-embedded/rpi-64bit-meta -kernel-bin
-```
-
-Then re-emerge the meta package, to delete the binary kernel package itself:
-```console
-pi64 ~ # emerge -v rpi-64bit-meta
-pi64 ~ # emerge --depclean
-```
-> Important: do **not** try to restart your system yet - with the binary kernel uninstalled, you **must** install the new kernel (and DTBs and module set) you have just built, or the image will no longer boot. We will do that next.
-
-Next, substituting your regular user's account name (the one you logged into when building the kernel, above) for `user` in the below, issue:
-```console
-pi64 ~ # cd /home/user/kbuild/linux
-pi64 linux # cp -v arch/arm64/boot/Image /boot/kernel8.img
-```
-
-Note that by default, the kernel does _not_ require a separate U-Boot loader.
-
-Next, copy over the device tree blobs (at the time of writing `arm64` was still using the `2710` dtb, but this may change to `2837` in future, so for safety, copy both of these, and also the RPi3 B+ and compute module 3 variants):
-```console
-pi64 linux # cp -v arch/arm64/boot/dts/broadcom/bcm{2710,2837}-rpi-3-b.dtb /boot/
-pi64 linux # cp -v arch/arm64/boot/dts/broadcom/bcm2710-rpi-3-b-plus.dtb /boot/
-pi64 linux # cp -v arch/arm64/boot/dts/broadcom/bcm2710-rpi-cm3.dtb /boot/
-```
-
-> Interestingly, even if you have a RPi3 B+, you don't *actually* need the `bcm2710-rpi-3-b-plus.dtb` dtb to boot it - the system's firmware will intelligently patch your standard `bcm2710-rpi-3-b.dtb` file, if that's all it can find. Nevertheless, it is better hygiene to include it.
-
-Then, copy across the device tree overlay blobs (these are now the responsibility of the kernel, not the boot firmware, package, so it is essential you add them):
-```console
-pi64 linux # cp -rv arch/arm64/boot/dts/overlays/ /boot/
-```
-
-Lastly, install the modules:
-```console
-pi64 linux # make modules_install
-pi64 linux # sync
-```
-> We **don't** do a `make firmware_install` here, since that build target [has been dropped](http://lkml.iu.edu/hypermail/linux/kernel/1709.1/04650.html) for >= 4.14.
-
-Once that is done, we'll loop back and build and install the Pi4 kernel. Issue:
-
-```console
-user@pi64 linux $ make distclean
-user@pi64 linux $ make bcm2711_defconfig
-user@pi64 linux $ make menuconfig
-```
-
-Make sure to set `CONFIG_LOCALVERSION` to something distinct (like "-2711") to ensure the release names of the two kernels are distinct - you don't want their modules getting co-mingled in `/lib/modules/<kernel-release-name>/...`. Make any other changes you want, then save and exit the configuration tool, and issue:
-
-```console
-user@pi64 linux $ nice -n 19 make -j4 Image modules dtbs
-```
-
-Once done, copy across the kernel, dtb and modules (note the modified name used for the RPi4 kernel in `/boot`, to distinguish it from the RPi3 kernel (`kernel8.img`) that we built and copied over earlier):
-
-```console
-pi64 linux # cp -v arch/arm64/boot/Image /boot/kernel8-p4.img
-pi64 linux # cp -v arch/arm64/boot/dts/broadcom/bcm2711-rpi-4-b.dtb /boot/
-pi64 linux # make modules_install
-```
-
-There is no need to copy the `overlays` directory, as that is identical between the RPi3 and RPi4 64-bit builds, and you have already copied it over.
-
-All done! After you reboot, you'll be using your new kernels.
-
-It is also possible to cross-compile a kernel on your (Gentoo) PC, which is much faster than doing it directly on the RPi. Please see the instructions [later in this document](#heavylifting).
-> Alternatively, if you set up `distcc` with `crossdev` (also covered in the instructions [below](#heavylifting)), you can call `pump make` instead of `make` to automatically offload kernel compilation workload to your PC. However, if you do use `distcc` in this way, be aware that not all kernel files can be successfully built in this manner; a small number (particularly, at the start of the kernel build) may fall back to using local compilation. This is normal, and the vast majority of files _will_ distribute OK.
-
-If you want to switch **back** to the binary kernel package again, simply comment out the line you added at the end of `/etc/portage/package.use/rpi-64bit-meta`, and issue:
-```console
-pi64 ~ # emerge -v rpi-64bit-meta
-```
-You will receive warnings about file collisions (as the kernel package overwrites your `/boot/kernel8.img`, `/boot/kernel8-p4.img` etc.) but it should go through OK. Reboot, and you'll be using your binary kernels again!
-
-> At this point, you may wish to clean up your old, source-built kernels' modules from `/lib/modules/<your-kernel-release-names>`, to save space.
 
 ### <a id="heavylifting"></a>Have your Gentoo PC Do the Heavy Lifting!
 
@@ -744,18 +445,6 @@ Leave the rest of the file as-is. Save, and exit `nano`.
 
 Reboot your system. You will now have a standard terminal login available only, which greatly saves on system resources.
 
-> Should you wish to completely remove the graphical desktop's _packages_ from your system too, please see my notes [here](https://github.com/sakaki-/gentoo-on-rpi-64bit/wiki/Create-a-Slimmed-Down-Version-of-the-Image).
-
-Next, ensure that your system won't autoupdate (since this can cause high system load at an unpredictable moment). Log in as root, then issue:
-```console
-pi64 ~ # echo "dev-embedded/rpi-64bit-meta -weekly-genup" > /etc/portage/package.use/rpi-64bit-meta
-pi64 ~ # emerge -v rpi-64bit-meta
-```
-
-You can now arrange for your server program to start on boot, either by creating an explicit OpenRC service file in `/etc/init.d/` or by adding an (executable) startup script, named `/etc/local.d/<servicename>.start`, in which you fork off the server using `start-stop-daemon` (or similar).
-
-> I recommend that you run your service at the *lowest* possible system priority (i.e., highest positive number niceness), particularly if it is CPU intensive. This will ensure that you're able to log in successfully using `ssh`, even if the daemon is in a tight CPU-bound loop.
-
 It is generally more reliable to use the Ethernet rather than the WiFi network interface when running a headless server in this manner. Also, make sure your system has an adequate heatsink fitted (or even active CPU cooling, for particularly demanding applications), since the RPi3 (particuarly when running in 64-bit mode) can [get quite hot](https://www.theregister.co.uk/2017/10/18/active_cooling_a_raspberry_pi_3/), leading to thermal throttling or even protective system shutdown if your cooling is insufficient. The RPi3 Model B+ has a [integral heat-spreader](https://core-electronics.com.au/tutorials/raspberry-pi-3-model-b-plus-performance-vs-3-model-b.html), so (in addition to having a higher clock speed) it may be a somewhat better choice than the RPi3 Model B for more demanding applications. The RPi4 has [even more significant thermal challenges](https://www.raspberrypi.org/forums/viewtopic.php?f=63&t=245703) than the RPi3, so active cooling is recommended for demanding applications.
 
 > Of course, take the normal precautions when running an internet-exposed server in this manner: for example, set up an appropriate firewall, consider running the server process under `firejail`, modify the shipped-default passwords, and keep your system up-to-date by (manually) running `genup`, from time to time.
@@ -790,90 +479,27 @@ Leave the rest of the file as-is. Save, and exit `nano`. Reboot your system, and
 
 The following are some notes about the detailed structure of the image. It is not necessary to read these to use the image day-to-day. <!--  -->
 
-
-### RPi-Specific Ebuilds
-
-As of version 1.1.0 of the image, all the required firmware and startup files have now been placed under ebuild control, for ease of maintenance going forward:
-* <a id="metapackage"></a>A metapackage, [`sys-firmware/rpi-64bit-meta`](https://github.com/sakaki-/genpi64-overlay/tree/master/dev-embedded/rpi-64bit-meta) from the (subscribed) [`genpi64`](https://github.com/sakaki-/genpi64-overlay) ebuild repository (overlay) governs the inclusion of all the components discussed below (controlled by a set of USE flags). The version of the metapackage matches the version of the live-USB release to which it pertains.
-
-  > For avoidance of doubt, by default the `rpi-64bit-meta` metapackage does _not_ specify the various end-user applications installed on the image (such as `libreoffice`, `firefox` etc.), so these may be freely uninstalled or modified as required (if you only intend to install *additional* applications however, you can specify the `apps` USE flag for `rpi-64bit-meta`, and then remove `libreoffice`, `firefox` etc from your @world set (`/var/lib/portage/world`).
-* <a id="boot_fw"></a>The `/boot` firmware (_excluding_ the kernel and DTBs; _those_ are provided by `sys-kernel/bcm{rpi3,2711}-kernel<-bis>-bin`, discussed later) is provided by [`sys-boot/rpi3-64bit-firmware`](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-boot/rpi3-64bit-firmware): the upstream [`raspberrypi/firmware/boot`](https://github.com/raspberrypi/firmware/tree/master/boot) repo is checked once per week for new release tags, and a new corresponding ebuild created automatically if one is found. This package also pulls in (via [`sys-boot/rpi3-boot-config`](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-boot/rpi3-boot-config)) 'starter' configuration files `/boot/cmdline.txt` and `/boot/config.txt` (with settings matching those on the image), but these are `CONFIG_PROTECT`ed, so any changes you make subsequently will be preserved.
-* <a id="wifi"></a>The configuration file `brcmfmac43430-sdio.txt`, required for the RPi3/4's integrated WiFi, is provided by [`sys-firmware/brcm43430-firmware`](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-firmware/brcm43430-firmware) (its main firmware being provided by the standard [`linux-firmware`](http://packages.gentoo.org/package/sys-kernel/linux-firmware) package).
-   * This package now also provides the equivalent file `brcmfmac43455-sdio.txt`, for use with the RPi3 B+'s (and RPi4 B's) new [dual-band WiFi](https://www.raspberrypi.com.tw/tag/bcm2837/) setup (Cypress CYW43455), plus the `brcmfmac43430-sdio.clm_blob`.
-   * The WiFi regulatory domain (initially set to `GB` on the image), is set by the `rpi3-wifi-regdom` service (provided by the [`net-wireless/rpi3-wifi-regdom`](https://github.com/sakaki-/genpi64-overlay/tree/master/net-wireless/rpi3-wifi-regdom) package); its value may be set by editing the file `/etc/conf.d/rpi3-wifi-regdom`, or (more conveniently) via the GUI-based <kbd>Applications</kbd>&rarr;<kbd>Settings</kbd>&rarr;<kbd>RPi Config Tool</kbd>, <kbd>WiFi</kbd> tab.
-* <a id="bluetooth"></a>Firmware (`/etc/firmware/BCM43430A1.hcd`) for the RPi3/4's integrated Bluetooth transceiver is provided by [`sys-firmware/bcm4340a1-firmware`](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-firmware/bcm4340a1-firmware) (adapted from the Arch Linux [`pi-bluetooth`](https://aur.archlinux.org/packages/pi-bluetooth/) package). A startup service and `udev` rule are provided by the companion [`net-wireless/rpi3-bluetooth`](https://github.com/sakaki-/genpi64-overlay/tree/master/net-wireless/rpi3-bluetooth) package (adapted from the same Arch Linux upstream).
-* <a id="ondemand"></a>The `/etc/local.d/ondemand_freq_scaling.start` boot script, which switches the RPi3/4 from its (`bcm{rpi3,2711}_defconfig`) default `powersave` CPU frequency governor, to `ondemand`, for better performance, has been switched to a `sysinit` OpenRC service, provided by [`sys-apps/rpi3-ondemand-cpufreq`](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-apps/rpi3-ondemand-cpufreq). On the RPi3 B, this allows the frequency to range up to 1.2GHz, and on the RPi3 B+, up to 1.4GHz, without overclocking. On the RPi4 B, this allows the frequency to range up to 1.5GHz without overclocking (and up to 2.0GHz with).
-* <a id="init_scripts"></a>The `autoexpand_root_partition.start` script has been migrated into an OpenRC boot service, provided by [`sys-apps/rpi3-init-scripts`](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-apps/rpi3-init-scripts).
-* <a id="expand-swap"></a>On first boot, after the root has been expanded, the default swapfile (at `/var/cache/swap/swap1`) will be auto-expanded to 1,024MiB if required, by [`sys-apps/rpi3-expand-swap`](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-apps/rpi3-expand-swap); configuration settings in `/etc/conf.d/rpi3-expand-swap`.
-* <a id="zswap"></a>The `zswap` transparent compressing swap cache is set up by [`sys-apps/rpi3-zswap`](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-apps/rpi3-zswap); configuration settings in `/etc/conf.d/rpi3-zswap`.
-
-
-### <a id="expedited_updates"></a>New Features to Expedite Regular System Updating
-
-In addition to the above, as of version 1.1.0 of the image, a number of other changes have been made to expedite the process of keeping your 64-bit Gentoo RPi3 up-to-date:
-* <a id="binary_kp"></a>An autobuild of the official [`raspberrypi/linux`](https://github.com/raspberrypi/linux) kernel (default branch) using `bcmrpi3_defconfig` has been set up [here](https://github.com/sakaki-/bcmrpi3-kernel); a new release tarball is automatically pushed once per week, and a matching kernel binary package ([`sys-kernel/bcmrpi3-kernel-bin`](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-kernel/bcmrpi3-kernel-bin)) is also created simultaneously. A variant of this with a slightly tweaked config is also maintained [here](https://github.com/sakaki-/bcmrpi3-kernel-bis) with binary kernel package ([`sys-kernel/bcmrpi3-kernel-bis-bin`](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-kernel/bcmrpi3-kernel-bis-bin)); this latter version is used by default as of v1.2.2 of the image.
-  
-  As of version 1.5.0 of the image, a parallel set of projects is maintained for the `bcm2711_defconfig` kernel used when booting an RPi4 (default autobuild [here](https://github.com/sakaki-/bcm2711-kernel-bis) with binary kernel package [here](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-kernel/bcm2711-kernel-bin), `-bis` autobuild [here](https://github.com/sakaki-/bcm2711-kernel-bis) with binary kernel package [here](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-kernel/bcm2711-kernel-bis-bin)).
-  
-  NB: at the time of writing, the `rpi-4.19.y` branch was the default (receiving most attention for backports etc.) Using `-bin` packages for the kernel makes it easy to switch between them (and to update your kernel, and module set, to the latest version available - along with all other packages on your system - whenever you issue `genup`); you can see the kernels available by issuing `eix bcm{rpi3,2711}-kernel-bis-bin`. Also, note that by default (via the `with-matching-boot-fw` USE flag) installing a particular `sys-kernel/bcm{rpi3,2711}-kernel<-bis>-bin` version will _also_ cause the version of `sys-boot/rpi3-64bit-firmware` (see [above](#boot_fw)) current at the time the kernel was released, to be installed (to `/boot`). This helps to reduce issues with firmware / kernel mismatches with cutting edge features such as VC4 support.
-  Note also that via the (default) `pi3multiboot` flag, a matching-release `bcmrpi3-kernel-bis-bin` becomes a dep of `bcm2711-kernel-bis-bin`, so it suffices to work only with the latter (a similar USE flag is also available for the non-`bis` variants).
-
-  > Use of the provided binary kernel packages is optional, you can always uninstall them (by editing the file `/etc/portage/package.use/rpi-64bit-meta`, setting the `-kernel-bin` USE flag, then issuing `emerge -v rpi-64bit-meta`) and [building your own kernel](#kernelbuild) instead, if desired.
-
-* <a id="binhost"></a>The project's [Gentoo binhost](https://wiki.gentoo.org/wiki/Binary_package_guide) at https://isshoni.org/pi64pie has been reconfigured to perform a **weekly update and autobuild of all installed (userspace) packages on the image**, allowing your RPi3/4 to perform fast updates via the resulting binary packages where possible, only falling back to local source-based compilation when necessary (using this facility [is optional](#disable_weekly_update), of course, just like the binary kernel package). <a id="rsync"></a>The binhost also provides a (weekly-gated) `rsync` mirror (`rsync://isshoni.org/gentoo-portage-pi64-gem`) for the main `gentoo` repo (fully compatible with Gentoo's official `gemato` signed hash verification), used to keep your RPi3/4's "visible" ebuild tree in lockstep with the binary package versions available on the [isshoni.org](https://isshoni.org/pi64pie) binhost (incidentally, the `gentoo` repo on [isshoni.org](https://isshoni.org/pi64pie) itself is maintained against upstream using `webrsync-gpg`).
-  > NB: I can make **no guarantees** about the future availability of the weekly autobuilds on [isshoni.org](https://isshoni.org/pi64pie), nor the autoupdated binary kernel packages (on GitHub). However, we use these as part of our own production infrastructure, so they should be around for a while. Use the provided binary packages at your own risk.
-
-* <a id="profile"></a>A custom Gentoo profile, `genpi64:default/linux/arm64/17.0/desktop/genpi64`, is provided (and selected as the active profile on the image), which supplies many of the default build settings, USE flags etc., required for 64-bit Gentoo on the RPi3/4, again, keeping them in lockstep with the binhost (and ensuring you will have a binary package available when upgrading any of the pre-installed software packages on the image). You can view this profile (provided via the [genpi64](https://github.com/sakaki-/genpi64-overlay) ebuild repository) [here](https://github.com/sakaki-/genpi64-overlay/tree/master/profiles/targets/rpi3).
-    > NB: as of release 1.2.0, the profile changed, from `rpi3:default/linux/arm64/13.0/desktop/rpi3` to `rpi3:default/linux/arm64/17.0/desktop/rpi3`, reflecting the underlying [Gentoo profile upgrade](https://www.gentoo.org/support/news-items/2017-11-30-new-17-profiles.html) from 13.0 to 17.0. Users of prior releases interested in manually upgrading should read [these notes](https://github.com/sakaki-/gentoo-on-rpi-64bit/releases#upgrade_to_profile_17). Then, as of release 1.5.0, the profile changed again, from `rpi3:default/linux/arm64/17.0/desktop/rpi3` to `genpi64:default/linux/arm64/17.0/desktop/genpi64`, reflecting a change in name of the main overlay (from `rpi` to `genpi64`). Users interested in this migration should read my transcribed news article [here](https://forums.gentoo.org/viewtopic-p-8362116.html#8362116).
-
-<a id="why_weekly_update"></a>These features, viz.:
-* the `genpi64:default/linux/arm64/17.0/desktop/genpi64` [profile](https://github.com/sakaki-/genpi64-overlay/tree/master/profiles/targets/rpi3),
-* the weekly autobuild [isshoni.org binhost](https://isshoni.org/pi64pie),
-* the 'weekly-gated', signature-authenticated portage rsync mirror (`rsync://isshoni.org/gentoo-portage-pi64-gem`), and
-* the [`sys-kernel/bcmrpi3-kernel-bis-bin`](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-kernel/bcmrpi3-kernel-bis-bin) and [`sys-kernel/bcm2711-kernel-bis-bin`](https://github.com/sakaki-/genpi64-overlay/tree/master/sys-kernel/bcm2711-kernel-bis-bin) binary kernel packages;
-
-make **updating a typical system (with few user-added packages) possible with a near 100% hit rate on the binhost's binaries**. As such, updating (via [`genup`](https://github.com/sakaki-/genup), for example, or an old-school `eix-sync && emerge -uDUav --with-bdeps=y @world`) is _much_ less onerous than before, and so has been **automated** on the image (via the `app-portage/weekly-genup` package, which installs a script in `/etc/cron.weekly`). This automated weekly updating can easily be disabled if you do not wish to use it (simply edit the file `/etc/portage/package.use/rpi-64bit-meta` and set the `-weekly-genup` USE flag, then `emerge -v rpi-64bit-meta`).
-
 ### Subscribed Ebuild Repositories (_aka_ Overlays)
 
 The image is subscribed to the following ebuild repositories:
 * **gentoo**: this is the main Gentoo tree of course, but is (by default) supplied via `rsync://isshoni.org/gentoo-portage-pi64-gem`, a weekly-gated, signature-authenticated portage rsync mirror locked to the binhost's available files, as described [above](#rsync).
-* **[sakaki-tools](https://github.com/sakaki-/sakaki-tools)**: this provides a number of small utilities for Gentoo. The image currently uses the following ebuilds from the `sakaki-tools` overlay:
-  * **app-portage/showem** [source](https://github.com/sakaki-/showem), [manpage](https://github.com/sakaki-/gentoo-on-rpi-64bit/blob/master/reference/showem.pdf)
+* **[genpi-tools](https://github.com/GenPi64/genpi-tools)**: this provides a number of small utilities for Gentoo. The image currently uses the following ebuilds from the `genpi-tools` overlay:
+  * **app-portage/showem** [source](https://github.com/GenPi64/showem), [manpage](https://github.com/GenPi64/gentoo-on-rpi-64bit/blob/master/reference/showem.pdf)
 
     A tool to view the progress of parallel `emerge` operations.
-  * **app-portage/genup** [source](https://github.com/sakaki-/genup), [manpage](https://github.com/sakaki-/gentoo-on-rpi-64bit/blob/master/reference/genup.pdf)
+  * **app-portage/genup** [source](https://github.com/GenPi64/genup), [manpage](https://github.com/GenPi64/gentoo-on-rpi-64bit/blob/master/reference/genup.pdf)
 
-    A utility for keeping Gentoo systems up to date.
-  * **app-portage/porthash** [source](https://github.com/sakaki-/porthash), [manpage](https://github.com/sakaki-/gentoo-on-rpi-64bit/blob/master/reference/porthash.pdf)
-
-    Checks, or creates, signed 'master' hashes of Gentoo repos (useful when distributing via e.g. `rsync`). Retired as of version 1.3.0 of this image in favour of Gentoo's official `gemato` verification.
-  * **sys-apps/me_cleaner** [upstream](https://github.com/corna/me_cleaner)
-
-    A tool for partial deblobbing of Intel ME/TXE firmware images, used to disable the Intel Management Engine (ME). Now bundled with the image for convenience, for those who would like to use their RPi3 as an external programmer to reflash the firmware on their PC. See [these notes](https://wiki.gentoo.org/wiki/Sakaki's_EFI_Install_Guide/Disabling_the_Intel_Management_Engine) for further details.
-  * **sys-apps/coreboot-utils** [upstream](https://www.coreboot.org)
-
-    Provides some tools useful for inspection of Intel firmware images (used with `me_cleaner`, above).
-
-  * **media-gfx/fotoxx** [upstream](https://www.kornelix.net/fotoxx/fotoxx.html)
-
-    A program for improving image files from digital cameras (HDR etc). Supplies v19.13, which is not yet in the Gentoo tree.
-
-* **[genpi64](https://github.com/sakaki-/genpi64-overlay)**: this overlay (which used to be named `rpi3` and was subsequently [migrated](https://forums.gentoo.org/viewtopic-p-8362116.html#8362116) at v1.5.0 with the advent of RPi4 support) provides ebuilds specific to the Raspberry Pi 3 & Pi 4, or builds that have fallen off the main Gentoo tree but which are the last known reliable variants for `arm64`. It also provides the [custom profile](#profile) [`genpi64:default/linux/arm64/17.0/desktop/genpi64`](https://github.com/sakaki-/genpi64-overlay/tree/master/profiles/targets/rpi3). A list of provided ebuilds may be found on the [overlay's project page](https://github.com/sakaki-/genpi64-overlay#list_of_ebuilds).
+* **[genpi64](https://github.com/GenPi64/genpi64-overlay)**: this overlay (which used to be named `rpi3` and was subsequently [migrated](https://forums.gentoo.org/viewtopic-p-8362116.html#8362116) at v1.5.0 with the advent of RPi4 support) provides ebuilds specific to the Raspberry Pi 3 & Pi 4, or builds that have fallen off the main Gentoo tree but which are the last known reliable variants for `arm64`. It also provides the [custom profile](#profile) [`genpi64:default/linux/arm64/17.0/desktop/genpi64`](hhttps://github.com/GenPi64/genpi64-overlay/tree/master/profiles/targets/genpi64). A list of provided ebuilds may be found on the [overlay's project page](https://github.com/GenPi64/genpi64-overlay#list_of_ebuilds).
 
 ## <a id="projectwiki"></a>Project Wiki
 
 In addition to the notes in this README, this project also has an associated open **wiki**, containing a number of short tutorial articles you may find helpful when using 64-bit Gentoo on your RPi3 or RPi4.
 
-You can view the wiki homepage [here](https://github.com/sakaki-/gentoo-on-rpi-64bit/wiki). Feel free to add your own material!
+You can view the wiki homepage [here](https://github.com/GenPi64/gentoo-on-rpi-64bit/wiki). Feel free to add your own material!
   
 ## <a id="helpwanted"></a>Help Wanted!
 
 You've got this far through the README - I'm impressed ^-^. In fact, you may be just the sort of person to help get `arm64` into a more stable state in the main Gentoo tree...
-
-To that end, if you have managed to get additional packages (not included in the original [pre-installed set](https://github.com/sakaki-/gentoo-on-rpi-64bit/blob/master/reference/world-all-packages)) working reliably on your `gentoo-on-rpi-64bit` system, please feel free to submit PRs for the relevant [profile](#profile) elements of the [`genpi64` overlay](https://github.com/sakaki-/genpi64-overlay/tree/master/profiles/targets/rpi3) (for example, `package.accept_keywords`, `package.bashrc` and `package.use` entries). Not only will upstreaming your changes help other users in the short term, it will also create a shared knowledge base (about how to get various packages working on `arm64`) that can be used as a sourcebook for keywording PRs (etc.) to the main Gentoo tree.
-
-Within reason, I'm also happy to consider adding working packages to the set maintained by the weekly-autobuild [binhost](#binhost); just open an [issue](https://github.com/sakaki-/gentoo-on-rpi-64bit/issues) to request this.
 
 ## Acknowledgement
 
