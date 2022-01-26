@@ -24,10 +24,11 @@ The image may be downloaded from the link below (or via `wget`, per the instruct
 
 <a id="downloadlinks"></a>Variant | Version | Image
 :--- | ---: | ---: | 
-Raspberry Pi  4B, 3B/B+ 64-bit Full | alpha8 | [genpi64desktop-latest.img.zst](https://packages.genpi64.com/genpi-aarch64-desktop-latest.img.zst) ([mirror](https://fi.packages.genpi64.com/genpi-aarch64-desktop-latest.img.zst))
+Raspberry Pi  4B, 3B/B+ 64-bit Full | alpha9 | [genpi64-arm64-openrc-desktop-alpha9.img.zst](https://s3.genpi64.com/images/genpi64-arm64-openrc-desktop-alpha9.img.zst)
 Raspberry Pi 4B, 3B/B+ 64-bit Lite | alpha9 | [genpi64-arm64-openrc-lite-alpha9.img.zst](https://s3.genpi64.com/images/genpi64-arm64-openrc-lite-alpha9.img.zst)
+Raspberry Pi 4B, 3B/B+ 64-bit Lite (systemd) | alpha9 | [genpi64-arm64-systemd-lite-alpha9.img.zst](https://s3.genpi64.com/images/genpi64-arm64-systemd-lite-alpha9.img.zst)
 
-**NB:** most users will want the first, full image ([genpi64desktop-latest.img.zst](https://packages.genpi64.com/genpi-aarch64-desktop-latest.img.zst)) - the 'lite' variant ([genpi64-arm64-openrc-lite-alpha9.img.zst](https://s3.genpi64.com/images/genpi64-arm64-openrc-lite-alpha9.img.zst)) boots to a command-line (rather than a graphical desktop), and is intended only for experienced Gentoo users (who wish to to *e.g.* set up a server).
+**NB:** most users will want the first, full image ([genpi64desktop-latest.img.zst](https://s3.genpi64.com/images/genpi64-arm64-openrc-desktop-alpha9.img.zst)) - the 'lite' variant ([genpi64-arm64-openrc-lite-alpha9.img.zst](https://s3.genpi64.com/images/genpi64-arm64-openrc-lite-alpha9.img.zst)) boots to a command-line (rather than a graphical desktop), and is intended only for experienced Gentoo users (who wish to to *e.g.* set up a server).
 
 Please read the instructions below before proceeding. Also please note that all images (and binary packages) are provided 'as is' and without warranty. You should also be comfortable with the (at the moment, unavoidable) non-free licenses required by the firmware and boot software supplied on the image before proceeding: these may be reviewed [here](https://github.com/sakaki-/gentoo-on-rpi-64bit/tree/master/licenses).
 
@@ -47,8 +48,6 @@ Please read the instructions below before proceeding. Also please note that all 
   * [Installing New Packages Under Gentoo](#installing-new-packages-under-gentoo)
 - [Miscellaneous Configuration Notes, Hints, and Tips](#miscellaneous-configuration-notes-hints-and-tips-skip)
 - [Maintenance Notes (Advanced Users Only)](#maintenance-notes-advanced-users-only-skip)
-  * [Optional: Switch Back to a 'Pure' bcmrpi3_defconfig / bcm2711_defconfig Kernel](#revertkernelbin)
-  * [Optional: Compiling a Kernel from Source](#kernelbuild)
   * [Have your Gentoo PC Do the Heavy Lifting!](#have-your-gentoo-pc-do-the-heavy-lifting)
   * [Using your RPi3 as a Headless Server](#rpi3_headless)
 - [Miscellaneous Points (Advanced Users Only)](#miscellaneous-points-advanced-users-only-skip)
