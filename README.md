@@ -383,8 +383,14 @@ on the image to include v3d support for the new Pi4). Note however that this is 
 
 * On the RPi4, please make sure your EEPROM firmware is up-to-date; there is (at the time of writing) an official update available (`0137a8.bin`) that can lower power consumption by around 300mW, which makes a significant difference to this somewhat [thermally challenged](https://www.raspberrypi.org/forums/viewtopic.php?f=63&t=245703) ^-^ device. For more details please see [this post](https://www.raspberrypi.org/forums/viewtopic.php?p=1490467#p1490467).
 
-* `PermitRootLogin yes` has explicitly been set in `/etc/ssh/sshd_config`, and `sshd` is present in the `default` runlevel. This is for initial convenience only - feel free to adopt a more restrictive configuration.
-
+* To login as root, modify `/etc/ssh/sshd_config` by uncommenting these lines
+```shell
+PermitRootLogin yes
+PasswordAuthentication yes
+KbdInteractiveAuthentication yes
+UsePAM yes
+```
+This has been disabled by default, following the lead of upstream openssh to disable it. You might want to use public key encryption to connect instead to avoid needing the password.
 * I haven't properly tested suspend to RAM or suspend to swap functionality yet.
 
 * As of version 1.0.1, all users in the `wheel` group (which includes `demouser`) have a passwordless sudo ability for all commands. Modify `/etc/sudoers` via `visudo` to change this, if desired (the relevant line is `%wheel ALL=(ALL) NOPASSWD: ALL`).
