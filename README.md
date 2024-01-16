@@ -27,9 +27,11 @@ The image may be downloaded from the link below (or via `wget`, per the instruct
 
 <a id="downloadlinks"></a>Variant | Version | Image
 :--- | ---: | ---: | 
-Raspberry Pi  4B, 3B/B+ 64-bit Full | alpha9 | [genpi64-arm64-openrc-desktop-alpha9.img.zst](https://s3.genpi64.com/images/genpi64-arm64-openrc-desktop-alpha9.img.zst)
-Raspberry Pi 4B, 3B/B+ 64-bit Lite | alpha9 | [genpi64-arm64-openrc-lite-alpha9.img.zst](https://s3.genpi64.com/images/genpi64-arm64-openrc-lite-alpha9.img.zst)
-Raspberry Pi 4B, 3B/B+ 64-bit Lite (systemd) | alpha9 | [genpi64-arm64-systemd-lite-alpha9.img.zst](https://s3.genpi64.com/images/genpi64-arm64-systemd-lite-alpha9.img.zst)
+Raspberry Pi  4B, 3B/B+ 64-bit Full | N/A | N/A
+Raspberry Pi 4B, 3B/B+ 64-bit Lite | N/A | N/A
+Raspberry Pi 4B, 3B/B+ 64-bit Lite (systemd) | N/A | N/A
+
+**NB:** Currently as of January, 2024 we don't have up-to-date images as we are fixing our CI. Images are expected to be available again sometime during 2024. In the mean time, unofficial ones can be asked from our [Discord](https://discord.gg/Eu5D2e5KJQ).
 
 **NB:** most users will want the first, full image ([genpi64desktop-latest.img.zst](https://s3.genpi64.com/images/genpi64-arm64-openrc-desktop-alpha9.img.zst)) - the 'lite' variant ([genpi64-arm64-openrc-lite-alpha9.img.zst](https://s3.genpi64.com/images/genpi64-arm64-openrc-lite-alpha9.img.zst)) boots to a command-line (rather than a graphical desktop), and is intended only for experienced Gentoo users (who wish to to *e.g.* set up a server).
 
@@ -87,7 +89,7 @@ Choose either the full (recommended for most users) or 'lite' (command-line only
 
 On your Linux box, issue (you may need to be `root`, or use `sudo`, for the following, hence the '#' prompt):
 ```console
-# wget -c https://fi.packages.genpi64.com/genpi-aarch64-desktop-latest.img.zst
+# wget -c https://s3.genpi64.com/genpi-aarch64-desktop-latest.img.zst
 # zstd -d genpi64desktop-latest.img.zst -o genpi64desktop-latest.img
 ```
 
