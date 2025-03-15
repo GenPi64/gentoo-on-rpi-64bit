@@ -1,5 +1,5 @@
 # gentoo-on-rpi-64bit
-Bootable 64-bit Gentoo image for the Raspberry Pi 4 Model B, Model Pi 3 B and B+, and Model Pi Zero 2 W, with Linux 5.4, OpenRC, Xfce4, VC4/V3D, camera & h/w codec support, profile 17.0, weekly-autobuild binhost
+Bootable 64-bit Gentoo image for the Raspberry Pi 4 Model B, Model Pi 3 B and B+, and Model Pi Zero 2 W, with Linux 5.4, OpenRC, Xfce4, VC4/V3D, camera & h/w codec support, profile 23.0
 
 30 Oct 2020: sadly, due legal obligations arising from a recent change in Sakaki's 'real world' job, she stepped down from all maintenence roles related to Gentoo, leaving all her projects in limbo.  
 
@@ -9,9 +9,7 @@ This is the community maintained continuation of her work.  Want to get involved
 
 <img src="https://raw.githubusercontent.com/sakaki-/resources/master/raspberrypi/pi4/Raspberry_Pi_3_B_and_B_plus_and_4_B.jpg" alt="[Raspberry Pi 4B, 3B and B+]" width="250px" align="right"/>
 
-This project is a bootable, microSD card **64-bit Gentoo image for the [Raspberry Pi 4 model B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/), 
-[3 model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b/),  [3 model B+](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/),
-[Pi Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/)** single board computers (SBC).
+This project is a bootable, microSD card **64-bit Gentoo image for the [Raspberry Pi 4 model B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/), ** single board computers (SBC).
 
 The image's userland contains a complete (OpenRC-based) Gentoo system (including a full Portage tree) - so you can run `emerge` operations immediately - and has been pre-populated with a reasonable package set (Xfce, LibreOffice, VLC, Kodi, GIMP, etc.) so that you can get productive *without* having to compile anything first! Unless you *want* to, of course; this being Gentoo, GCC, Clang, IcedTea (OpenJDK 8), Go, Rust and various versions of Python are of course bundled also ^-^ As of version 1.2.0 of the image, all userland software has been built under Gentoo's 17.0 profile, and, as of version 1.5.0 of the image, **the new RPi4 Model B is also supported** (and to reflect this, the project itself has been renamed, from `gentoo-on-rpi3-64bit` to `gentoo-on-rpi-64bit` ^-^).
 
@@ -27,19 +25,19 @@ The image may be downloaded from the link below (or via `wget`, per the instruct
 
 <a id="downloadlinks"></a>Variant | Version | Image
 :--- | ---: | ---: | 
-Raspberry Pi  4B, 3B/B+ 64-bit Full | N/A | N/A
-Raspberry Pi 4B, 3B/B+ 64-bit Lite | N/A | N/A
-Raspberry Pi 4B, 3B/B+ 64-bit Lite (systemd) | N/A | N/A
+Raspberry Pi  4B, 64-bit Full | N/A | N/A
+Raspberry Pi 4B 64-bit Lite | N/A | N/A
+Raspberry Pi 4B 64-bit Lite (systemd) | N/A | N/A
 
-**NB:** Currently as of January, 2024 we don't have up-to-date images as we are fixing our CI. Images are expected to be available again sometime during 2024. In the mean time, unofficial ones can be asked from our [Discord](https://discord.gg/Eu5D2e5KJQ).
+**NB:** Currently as of January, 2024 we don't have up-to-date images as we are fixing our CI. Images are expected to be available again sometime during 2025. In the mean time, unofficial ones can be asked from our [Discord](https://discord.gg/Eu5D2e5KJQ).
+
+**NB:** **We are not officially supporting Raspberry Pi 3 boards anymore as of Febuary 2025 as we wish to focus on newer boards.**
 
 **NB:** most users will want the first, full image ([genpi64desktop-latest.img.zst](https://s3.genpi64.com/images/genpi64-arm64-openrc-desktop-alpha9.img.zst)) - the 'lite' variant ([genpi64-arm64-openrc-lite-alpha9.img.zst](https://s3.genpi64.com/images/genpi64-arm64-openrc-lite-alpha9.img.zst)) boots to a command-line (rather than a graphical desktop), and is intended only for experienced Gentoo users (who wish to to *e.g.* set up a server).
 
 Please read the instructions below before proceeding. Also please note that all images (and binary packages) are provided 'as is' and without warranty. You should also be comfortable with the (at the moment, unavoidable) non-free licenses required by the firmware and boot software supplied on the image before proceeding: these may be reviewed [here](https://github.com/sakaki-/gentoo-on-rpi-64bit/tree/master/licenses).
 
 > It is sensible to install Gentoo to a **separate** microSD card from that used by your default Raspbian system; that way, when you are finished using Gentoo, you can simply power off, swap back to your old card, reboot, and your original system will be just as it was.
-
-> Please also note that support for `arm64` is still in its [early stages](https://wiki.gentoo.org/wiki/Raspberry_Pi) with Gentoo, so it is quite possible that you may encounter strange bugs etc. when running a 64-bit image such as this one. A lot of packages [have been `* ~*` keyworded](https://github.com/sakaki-/genpi64-overlay/tree/master/profiles/targets/rpi3/package.accept_keywords) to get the system provided here to build... but hey, if you like Gentoo, little things like that aren't likely to put you off ^-^
 
 ## Table of Contents
 
